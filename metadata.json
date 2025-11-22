@@ -1,0 +1,5 @@
+{
+  "name": "Aotea College House Points",
+  "description": "A real-time house point tracking and management system for Aotea College, featuring role-based access for students, teachers, and administrators.",
+  "requestFramePermissions": []
+}
