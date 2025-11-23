@@ -9,11 +9,11 @@ interface HouseIconProps {
 const HouseIcon: React.FC<HouseIconProps> = ({ houseId, className }) => {
   const houseImageMap: { [key: string]: string } = {
     // Use the uploaded photos (filenames are as uploaded in public/images/)
-    keruru: '/images/Kereru Aotea Birds.jpg',
-    korimako: '/images/Aotea Birds Korimako.jpg',
-    kotuku: '/images/Aotea Birds Kotuku.jpg',
+    keruru: '/images/Kereru Aotea Birds.png',
+    korimako: '/images/Aotea Birds Korimako.png',
+    kotuku: '/images/Aotea Birds Kotuku.png',
     // 'raukawa' was replaced by 'pukeko'
-    pukeko: '/images/Aotea Birds Pukeko.jpg',
+    pukeko: '/images/Aotea Birds Pukeko.png',
   };
 
   const src = houseImageMap[houseId];
@@ -22,7 +22,15 @@ const HouseIcon: React.FC<HouseIconProps> = ({ houseId, className }) => {
   // Capitalize house name for alt text
   const houseName = houseId.charAt(0).toUpperCase() + houseId.slice(1);
 
-  return <img src={src} alt={`${houseName} house logo`} className={className} />;
+  return (
+    <div className={`relative flex items-center justify-center ${className}`}>
+      <img
+        src={src}
+        alt={`${houseName} house logo`}
+        className="w-full h-full object-contain drop-shadow-md"
+      />
+    </div>
+  );
 };
 
 export default HouseIcon;

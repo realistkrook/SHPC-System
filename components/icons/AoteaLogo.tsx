@@ -7,7 +7,7 @@ const AoteaLogo: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = (props) =
   // Use explicit filenames that match the uploaded files.
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <img src="/images/Aotea College Image.jpg" {...props} />
+    <img src="/images/aoteawhitelogo.png" {...props} />
   );
 };
 

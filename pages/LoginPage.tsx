@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabaseService';
 import AoteaLogo from '../components/icons/AoteaLogo';
+import MicrosoftLogo from '../components/icons/MicrosoftLogo';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -49,24 +50,24 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 px-4">
-      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-2xl shadow-2xl">
+    <div className="flex items-center justify-center min-h-screen bg-slate-950 px-4">
+      <div className="w-full max-w-md p-8 space-y-8 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-3xl shadow-2xl">
         <div className="text-center">
-          <div className="inline-block cursor-default" onClick={(e) => {
+          <div className="inline-block cursor-default transition-transform hover:scale-105" onClick={(e) => {
             if (e.detail === 3) {
               window.dispatchEvent(new Event('toggle-debug-overlay'));
             }
           }}>
-            <AoteaLogo className="w-24 h-24 mx-auto text-[#007971]" />
+            <AoteaLogo className="w-24 h-24 mx-auto text-aotea-teal drop-shadow-lg" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-white">
-            Aotea College Staff Login
+          <h2 className="mt-6 text-3xl font-black text-white tracking-tight">
+            Staff Login
           </h2>
-          <p className="mt-2 text-sm text-gray-400">House Points System</p>
+          <p className="mt-2 text-sm text-slate-400 font-medium uppercase tracking-wide">Aotea College House Points</p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && <div className="p-3 bg-red-500/20 text-red-300 rounded-md">{error}</div>}
-          <div className="rounded-md shadow-sm -space-y-px">
+          {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl text-sm">{error}</div>}
+          <div className="space-y-4">
             <div>
               <input
                 id="email-address"
@@ -74,7 +75,7 @@ const LoginPage: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 text-gray-200 rounded-t-md focus:outline-none focus:ring-[#007971] focus:border-[#007971] focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-700 bg-slate-950/50 text-slate-200 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-aotea-teal focus:border-transparent sm:text-sm transition-all"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +88,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-900 text-gray-200 rounded-b-md focus:outline-none focus:ring-[#007971] focus:border-[#007971] focus:z-10 sm:text-sm"
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-700 bg-slate-950/50 text-slate-200 rounded-xl placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-aotea-teal focus:border-transparent sm:text-sm transition-all"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -98,23 +99,24 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#007971] hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 focus:ring-offset-gray-800 disabled:bg-teal-900 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-aotea-teal hover:bg-aotea-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aotea-teal focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-aotea-teal/20 transition-all transform hover:-translate-y-0.5"
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>
+
+
         <div className="mt-4">
           <button
             onClick={() => handleOAuthSignIn('azure')}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="group relative w-full flex justify-center items-center gap-3 py-3 px-4 border border-slate-700 text-sm font-bold rounded-xl text-white bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all transform hover:-translate-y-0.5"
           >
+            <MicrosoftLogo className="w-5 h-5" />
             Sign in with Microsoft
           </button>
         </div>
-        <p className="text-xs text-center text-gray-500">
-          For demonstration, use: teacher@aotea.school.nz, leader@aotea.school.nz, or admin@aotea.school.nz. Password: password123
-        </p>
+
       </div>
     </div>
   );

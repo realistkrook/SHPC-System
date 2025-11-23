@@ -59,28 +59,33 @@ const PublicLeaderboardPage: React.FC = () => {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
-      <motion.h1
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-5xl md:text-7xl font-black text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 drop-shadow-sm"
+        className="text-center mb-16"
       >
-        House Leaderboard
-      </motion.h1>
+        <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-sm mb-4">
+          House Leaderboard
+        </h1>
+        <p className="text-slate-400 text-lg md:text-xl font-medium tracking-wide uppercase">
+          Aotea College House Competition
+        </p>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700/30 h-[400px] flex flex-col">
+            <div key={i} className="bg-slate-800/30 rounded-3xl p-6 border border-slate-700/30 h-[400px] flex flex-col">
               <div className="flex justify-between mb-8">
                 <div className="space-y-3">
-                  <Skeleton className="h-8 w-32" />
-                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-8 w-32 bg-slate-700/50" />
+                  <Skeleton className="h-4 w-16 bg-slate-700/50" />
                 </div>
-                <Skeleton className="h-20 w-20 rounded-full" />
+                <Skeleton className="h-20 w-20 rounded-full bg-slate-700/50" />
               </div>
               <div className="mt-auto space-y-4">
-                <Skeleton className="h-16 w-48 mx-auto" />
-                <Skeleton className="h-4 w-full rounded-full" />
+                <Skeleton className="h-16 w-48 mx-auto bg-slate-700/50" />
+                <Skeleton className="h-4 w-full rounded-full bg-slate-700/50" />
               </div>
             </div>
           ))

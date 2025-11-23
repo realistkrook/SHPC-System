@@ -9,7 +9,6 @@ const supabaseAnonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY ?? (typ
 if (!supabaseUrl || !supabaseAnonKey) {
   // Warn in dev so it's obvious to the developer; runtime will still surface errors when requests fail.
   // eslint-disable-next-line no-console
-  console.warn('Warning: VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set. Configure your .env or environment variables.');
 }
 
 class SupabaseService {

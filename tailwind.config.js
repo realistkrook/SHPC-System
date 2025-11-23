@@ -13,10 +13,20 @@ export default {
                 aotea: {
                     teal: '#007971',
                     dark: '#005a54',
+                    gold: '#D4AF37',
+                    slate: '#1e293b',
+                },
+                slate: {
+                    850: '#151e2e',
+                    950: '#020617',
                 }
             },
             fontFamily: {
                 sans: ['Montserrat', 'sans-serif'],
+            },
+            boxShadow: {
+                'glow': '0 0 20px rgba(0, 121, 113, 0.5)',
+                'glow-gold': '0 0 20px rgba(212, 175, 55, 0.3)',
             }
         },
     },
