@@ -13,12 +13,11 @@ const Layout: React.FC = () => {
     await signOut();
     navigate('/login');
   };
-  
+
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-      isActive
-        ? 'bg-[#007971] text-white'
-        : 'text-gray-300 hover:bg-teal-800 hover:text-white'
+    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+      ? 'bg-[#007971] text-white'
+      : 'text-gray-300 hover:bg-teal-800 hover:text-white'
     }`;
 
   return (
@@ -27,7 +26,11 @@ const Layout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 cursor-default" onClick={(e) => {
+                if (e.detail === 3) {
+                  window.dispatchEvent(new Event('toggle-debug-overlay'));
+                }
+              }}>
                 <AoteaLogo className="h-10 w-auto text-[#007971]" />
               </div>
               <div className="hidden md:block">
@@ -71,7 +74,7 @@ const Layout: React.FC = () => {
           </div>
         </div>
       </nav>
-      
+
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <Outlet />

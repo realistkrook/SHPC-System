@@ -10,11 +10,13 @@ import TeacherDashboardPage from './pages/teacher/DashboardPage';
 import LeaderDashboardPage from './pages/leader/LeaderDashboardPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import DebugOverlay from './components/DebugOverlay';
 import { UserRole } from './types';
 
 function App() {
   return (
     <AuthProvider>
+      <DebugOverlay />
       <HashRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

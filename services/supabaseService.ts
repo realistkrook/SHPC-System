@@ -160,9 +160,18 @@ class SupabaseService {
 
     const houseColorMap: { [key: string]: string } = {
       pukeko: 'bg-blue-600',
-      keruru: 'bg-purple-600',
+      Pukeko: 'bg-blue-600',
+      kereru: 'bg-purple-600',
+      Kereru: 'bg-purple-600',
       korimako: 'bg-green-600',
+      Korimako: 'bg-green-600',
       kotuku: 'bg-yellow-500',
+      Kotuku: 'bg-yellow-500',
+      // Fallbacks if IDs are different
+      'Pūkeko': 'bg-blue-600',
+      'Kererū': 'bg-purple-600',
+      'Kōrimako': 'bg-green-600',
+      'Kōtuku': 'bg-yellow-500',
     };
 
     return data.map(h => {

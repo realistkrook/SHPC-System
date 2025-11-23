@@ -14,6 +14,7 @@ export interface User {
 export interface Profile {
   id: string; // foreign key to auth.users.id
   full_name: string;
+  email?: string;
   role: UserRole;
 }
 

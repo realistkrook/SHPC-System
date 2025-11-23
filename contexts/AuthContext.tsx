@@ -25,6 +25,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     const session = await supabase.getSession();
     if (session?.user) {
+      // App-Level Domain Restriction
+      const email = session.user.email || '';
+      if (!email.endsWith('@aotea.school.nz')) {
+        console.warn(`Unauthorized domain: ${email}. Signing out.`);
+        alert('Access Restricted: Only @aotea.school.nz accounts are allowed.');
+        await supabase.signOut();
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+
       const userProfile = await supabase.getProfile(session.user.id);
       if (userProfile) {
         setUser({ id: session.user.id, email: session.user.email || '' });

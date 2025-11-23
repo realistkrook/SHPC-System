@@ -18,8 +18,8 @@ const LoginPage: React.FC = () => {
       // Fix: The custom supabase.signIn method returns a flat object. Destructure `profile` directly and use it to check for the user's role.
       const { profile, error: authError } = await supabase.signIn(email, password);
       if (authError) throw new Error(authError);
-      if(profile?.role) {
-         navigate('/');
+      if (profile?.role) {
+        navigate('/');
       } else {
         throw new Error("Could not retrieve user profile.");
       }
@@ -52,7 +52,13 @@ const LoginPage: React.FC = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-900 px-4">
       <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-2xl shadow-2xl">
         <div className="text-center">
-          <AoteaLogo className="w-24 h-24 mx-auto text-[#007971]" />
+          <div className="inline-block cursor-default" onClick={(e) => {
+            if (e.detail === 3) {
+              window.dispatchEvent(new Event('toggle-debug-overlay'));
+            }
+          }}>
+            <AoteaLogo className="w-24 h-24 mx-auto text-[#007971]" />
+          </div>
           <h2 className="mt-6 text-3xl font-extrabold text-white">
             Aotea College Staff Login
           </h2>
@@ -100,14 +106,14 @@ const LoginPage: React.FC = () => {
         </form>
         <div className="mt-4">
           <button
-            onClick={() => handleOAuthSignIn('microsoft')}
+            onClick={() => handleOAuthSignIn('azure')}
             className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Sign in with Microsoft
           </button>
         </div>
         <p className="text-xs text-center text-gray-500">
-            For demonstration, use: teacher@aotea.school.nz, leader@aotea.school.nz, or admin@aotea.school.nz. Password: password123
+          For demonstration, use: teacher@aotea.school.nz, leader@aotea.school.nz, or admin@aotea.school.nz. Password: password123
         </p>
       </div>
     </div>

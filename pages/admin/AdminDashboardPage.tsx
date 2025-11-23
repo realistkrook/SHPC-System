@@ -4,14 +4,14 @@ import { supabase } from '../../services/supabaseService';
 import { House, Profile, UserRole } from '../../types';
 
 const AdminDashboardPage: React.FC = () => {
-  return (
-    <div className="space-y-12">
-        <UserManagement />
-        <AllowedEmails />
-        <HouseManagement />
-        <DangerZone />
-    </div>
-  );
+    return (
+        <div className="space-y-12">
+            <UserManagement />
+            <AllowedEmails />
+            <HouseManagement />
+            <DangerZone />
+        </div>
+    );
 };
 
 const AllowedEmails = () => {
@@ -98,7 +98,7 @@ const UserManagement = () => {
         try {
             const data = await supabase.getProfiles();
             setProfiles(data);
-        } catch(err: any) {
+        } catch (err: any) {
             setError(err.message);
         }
     }, []);
@@ -111,7 +111,7 @@ const UserManagement = () => {
         try {
             await supabase.updateUserRole(profileId, newRole);
             fetchProfiles(); // Refresh
-        } catch(error: any) {
+        } catch (error: any) {
             alert(`Error: ${error.message}`);
         }
     }
@@ -125,6 +125,7 @@ const UserManagement = () => {
                     <thead className="bg-gray-900">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Role</th>
                         </tr>
                     </thead>
@@ -132,6 +133,7 @@ const UserManagement = () => {
                         {profiles.map(p => (
                             <tr key={p.id}>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{p.full_name}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{p.email || 'N/A'}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                     <select value={p.role} onChange={e => handleRoleChange(p.id, e.target.value as UserRole)} className="bg-gray-700 border border-gray-600 rounded-md p-1">
                                         {Object.values(UserRole).map(role => <option key={role} value={role}>{role}</option>)}
@@ -149,12 +151,18 @@ const UserManagement = () => {
 const HouseManagement = () => {
     const [houses, setHouses] = useState<House[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [localPoints, setLocalPoints] = useState<{ [key: string]: string }>({});
+    const [saving, setSaving] = useState<{ [key: string]: boolean }>({});
 
     const fetchHouses = useCallback(async () => {
         setError(null);
         try {
             const data = await supabase.getHouses();
             setHouses(data);
+            // Initialize local state
+            const pointsMap: { [key: string]: string } = {};
+            data.forEach(h => pointsMap[h.id] = h.points.toString());
+            setLocalPoints(pointsMap);
         } catch (err: any) {
             setError(err.message);
         }
@@ -164,24 +172,33 @@ const HouseManagement = () => {
         fetchHouses();
     }, [fetchHouses]);
 
-    const handlePointsUpdate = async (houseId: string, newPointsStr: string) => {
-        const newPoints = parseInt(newPointsStr, 10);
+    const handlePointsChange = (houseId: string, val: string) => {
+        setLocalPoints(prev => ({ ...prev, [houseId]: val }));
+    };
+
+    const handleSave = async (houseId: string) => {
+        const val = localPoints[houseId];
+        const newPoints = parseInt(val, 10);
         if (isNaN(newPoints)) return;
 
+        setSaving(prev => ({ ...prev, [houseId]: true }));
         try {
             await supabase.updateHousePoints(houseId, newPoints);
-            fetchHouses();
+            // Refresh to confirm
+            await fetchHouses();
         } catch (error: any) {
             alert(`Error: ${error.message}`);
+        } finally {
+            setSaving(prev => ({ ...prev, [houseId]: false }));
         }
     }
-    
+
     const handleResetPoints = async (houseId: string) => {
-        if(window.confirm("Are you sure you want to reset this house's points to 0?")) {
+        if (window.confirm("Are you sure you want to reset this house's points to 0?")) {
             try {
                 await supabase.updateHousePoints(houseId, 0);
                 fetchHouses();
-            } catch(error: any) {
+            } catch (error: any) {
                 alert(`Error: ${error.message}`);
             }
         }
@@ -196,12 +213,20 @@ const HouseManagement = () => {
                     <div key={h.id} className="flex items-center justify-between bg-gray-900 p-4 rounded-lg">
                         <span className={`font-bold text-lg ${h.textColor}`}>{h.name}</span>
                         <div className="flex items-center space-x-2">
-                            <input 
-                                type="number" 
-                                defaultValue={h.points} 
-                                onBlur={e => handlePointsUpdate(h.id, e.target.value)}
-                                className="w-24 bg-gray-700 border border-gray-600 rounded-md p-1 text-right" 
+                            <input
+                                type="number"
+                                value={localPoints[h.id] || ''}
+                                onChange={e => handlePointsChange(h.id, e.target.value)}
+                                className="w-24 bg-gray-700 border border-gray-600 rounded-md p-1 text-right text-white"
                             />
+                            <button
+                                onClick={() => handleSave(h.id)}
+                                disabled={saving[h.id]}
+                                className="px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-md text-xs font-medium disabled:opacity-50"
+                            >
+                                {saving[h.id] ? 'Saving...' : 'Save'}
+                            </button>
+                            <div className="w-px h-6 bg-gray-700 mx-2"></div>
                             <button onClick={() => handleResetPoints(h.id)} className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs">Reset to 0</button>
                         </div>
                     </div>
@@ -254,7 +279,7 @@ const DangerZone = () => {
                             This will permanently delete all point requests, all user profiles (except your own admin account), and reset all house points to zero.
                         </p>
                         <p className="text-yellow-400 font-semibold mb-6">This action is irreversible.</p>
-                        
+
                         {error && <div className="p-3 mb-4 bg-red-500/20 text-red-300 rounded-md">{error}</div>}
 
                         <label htmlFor="confirm-text" className="block text-sm font-medium text-gray-300 mb-2">
