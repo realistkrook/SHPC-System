@@ -7,8 +7,16 @@ import { UserRole } from '../types';
 import { clsx } from 'clsx';
 
 const Layout: React.FC = () => {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-aotea-teal"></div>
+      </div>
+    );
+  }
 
   const handleSignOut = async () => {
     await signOut();

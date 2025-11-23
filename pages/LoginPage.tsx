@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../services/supabaseService';
 import AoteaLogo from '../components/icons/AoteaLogo';
 import MicrosoftLogo from '../components/icons/MicrosoftLogo';
@@ -10,6 +11,13 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { profile } = useAuth();
+
+  useEffect(() => {
+    if (profile) {
+      navigate('/');
+    }
+  }, [profile, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,13 +115,20 @@ const LoginPage: React.FC = () => {
         </form>
 
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-4">
           <button
             onClick={() => handleOAuthSignIn('azure')}
             className="group relative w-full flex justify-center items-center gap-3 py-3 px-4 border border-slate-700 text-sm font-bold rounded-xl text-white bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 focus:ring-offset-slate-900 transition-all transform hover:-translate-y-0.5"
           >
             <MicrosoftLogo className="w-5 h-5" />
             Sign in with Microsoft
+          </button>
+
+          <button
+            onClick={() => navigate('/')}
+            className="w-full text-center text-sm text-slate-400 hover:text-white transition-colors"
+          >
+            &larr; Back to Leaderboard
           </button>
         </div>
 
