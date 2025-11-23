@@ -30,12 +30,12 @@ class SupabaseService {
           signInWithPassword: async () => ({ data: { user: null, session: null }, error: new Error(missingMsg) }),
           signOut: async () => ({ error: new Error(missingMsg) }),
           getSession: async () => ({ data: { session: null } }),
-          onAuthStateChange: (_cb: any) => ({ data: { subscription: { unsubscribe: () => {} } } }),
+          onAuthStateChange: (_cb: any) => ({ data: { subscription: { unsubscribe: () => { } } } }),
         },
-        from: (_: string) => ({ select: async () => { thrower(); } , insert: async () => { thrower(); }, update: async () => { thrower(); }, delete: async () => { thrower(); } }),
+        from: (_: string) => ({ select: async () => { thrower(); }, insert: async () => { thrower(); }, update: async () => { thrower(); }, delete: async () => { thrower(); } }),
         rpc: async () => { thrower(); },
-        channel: (_: string) => ({ on: () => ({ subscribe: (_: any, __: any) => {} }) }),
-        removeChannel: (_: any) => {},
+        channel: (_: string) => ({ on: () => ({ subscribe: (_: any, __: any) => { } }) }),
+        removeChannel: (_: any) => { },
       };
       this.supabase = dummy as SupabaseClient;
     }
@@ -51,11 +51,11 @@ class SupabaseService {
       return { user: null, session: null, profile: null, error: error.message };
     }
     if (data.user) {
-        const profile = await this.getProfile(data.user.id);
-        if(!profile) {
-            return { user: data.user, session: data.session, profile: null, error: 'Could not find a user profile.'}
-        }
-        return { user: data.user, session: data.session, profile, error: null };
+      const profile = await this.getProfile(data.user.id);
+      if (!profile) {
+        return { user: data.user, session: data.session, profile: null, error: 'Could not find a user profile.' }
+      }
+      return { user: data.user, session: data.session, profile, error: null };
     }
     return { user: null, session: null, profile: null, error: 'An unknown error occurred.' };
   }
@@ -96,12 +96,12 @@ class SupabaseService {
   }
 
   async getSession(): Promise<Session | null> {
-      const { data } = await this.supabase.auth.getSession();
-      return data.session;
+    const { data } = await this.supabase.auth.getSession();
+    return data.session;
   }
 
   onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-      return this.supabase.auth.onAuthStateChange(callback).data.subscription;
+    return this.supabase.auth.onAuthStateChange(callback).data.subscription;
   }
 
   // =================================================================
@@ -109,27 +109,41 @@ class SupabaseService {
   // =================================================================
 
   async getProfile(userId: string): Promise<Profile | null> {
-    const { data, error } = await this.supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (error) {
-      console.error('Error fetching profile:', error.message);
+    try {
+      // Create a timeout promise
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Profile fetch timed out')), 5000)
+      );
+
+      const { data, error } = await Promise.race([
+        this.supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single(),
+        timeout
+      ]) as any;
+
+      if (error) {
+        console.error('Error fetching profile:', error.message);
+        return null;
+      }
+      return data;
+    } catch (err: any) {
+      console.error('getProfile failed:', err.message);
       return null;
     }
-    return data;
   }
 
   async getProfiles(): Promise<Profile[]> {
-      const { data, error } = await this.supabase.from('profiles').select('*');
-      if (error) throw new Error(`Failed to fetch profiles: ${error.message}`);
-      return data || [];
+    const { data, error } = await this.supabase.from('profiles').select('*');
+    if (error) throw new Error(`Failed to fetch profiles: ${error.message}`);
+    return data || [];
   }
-  
+
   async updateUserRole(profileId: string, newRole: UserRole): Promise<void> {
-      const { error } = await this.supabase.from('profiles').update({ role: newRole }).eq('id', profileId);
-      if (error) throw error.message;
+    const { error } = await this.supabase.from('profiles').update({ role: newRole }).eq('id', profileId);
+    if (error) throw error.message;
   }
 
   // =================================================================
@@ -145,38 +159,38 @@ class SupabaseService {
     }
 
     const houseColorMap: { [key: string]: string } = {
-    pukeko: 'bg-blue-600',
-        keruru: 'bg-purple-600',
-        korimako: 'bg-green-600',
-        kotuku: 'bg-yellow-500',
+      pukeko: 'bg-blue-600',
+      keruru: 'bg-purple-600',
+      korimako: 'bg-green-600',
+      kotuku: 'bg-yellow-500',
     };
 
     return data.map(h => {
-        const color = houseColorMap[h.id] || 'bg-gray-500';
-        return {
-          ...h,
-          color,
-          textColor: color.replace('bg-', 'text-')
-        };
+      const color = houseColorMap[h.id] || 'bg-gray-500';
+      return {
+        ...h,
+        color,
+        textColor: color.replace('bg-', 'text-')
+      };
     });
   }
-  
+
   async updateHousePoints(houseId: string, points: number): Promise<void> {
-      const { error } = await this.supabase.from('houses').update({ points }).eq('id', houseId);
-      if (error) throw error.message;
+    const { error } = await this.supabase.from('houses').update({ points }).eq('id', houseId);
+    if (error) throw error.message;
   }
-  
+
   /**
    * Adds points directly and creates an approved request for logging.
    * Requires a Supabase RPC function `add_manual_points`.
    */
   async addManualPoints(houseId: string, points: number, reason: string): Promise<void> {
-      const { error } = await this.supabase.rpc('add_manual_points', {
-          p_house_id: houseId,
-          p_points: points,
-          p_reason: reason
-      });
-      if (error) throw error.message;
+    const { error } = await this.supabase.rpc('add_manual_points', {
+      p_house_id: houseId,
+      p_points: points,
+      p_reason: reason
+    });
+    if (error) throw error.message;
   }
 
   // =================================================================
@@ -184,26 +198,26 @@ class SupabaseService {
   // =================================================================
 
   async getPointRequests(): Promise<PointRequest[]> {
-      const { data, error } = await this.supabase
-        .from('point_requests')
-        .select(`
+    const { data, error } = await this.supabase
+      .from('point_requests')
+      .select(`
             *,
-            teacher:profiles ( full_name ),
+            teacher:profiles!teacher_id ( full_name ),
             house:houses ( name ),
-            reviewer:reviewed_by ( full_name )
+            reviewer:profiles!reviewed_by ( full_name )
         `)
-        .order('submitted_at', { ascending: false });
-        
-      if (error) {
-          throw new Error(`Failed to fetch point requests: ${error.message}`);
-      }
-      
-      return data.map((req: any) => ({
-          ...req,
-          teacher_name: req.teacher?.full_name || 'N/A',
-          house_name: req.house?.name || 'N/A',
-          reviewed_by_name: req.reviewer?.full_name || null,
-      }));
+      .order('submitted_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch point requests: ${error.message}`);
+    }
+
+    return data.map((req: any) => ({
+      ...req,
+      teacher_name: req.teacher?.full_name || 'N/A',
+      house_name: req.house?.name || 'N/A',
+      reviewed_by_name: req.reviewer?.full_name || null,
+    }));
   }
 
   async submitPointRequest(request: { house_id: string; points: number; reason: string }): Promise<void> {
@@ -230,16 +244,16 @@ class SupabaseService {
   }
 
   async rejectRequest(requestId: string): Promise<void> {
-      const session = await this.getSession();
-      if (!session?.user) throw new Error("You must be logged in.");
+    const session = await this.getSession();
+    if (!session?.user) throw new Error("You must be logged in.");
 
-      const { error } = await this.supabase
-        .from('point_requests')
-        .update({ status: PointRequestStatus.Rejected, reviewed_by: session.user.id })
-        .eq('id', requestId);
+    const { error } = await this.supabase
+      .from('point_requests')
+      .update({ status: PointRequestStatus.Rejected, reviewed_by: session.user.id })
+      .eq('id', requestId);
     if (error) throw new Error(`Failed to reject request: ${error.message}`);
   }
-  
+
   /**
    * Resets all project data. Calls a secure RPC function.
    * This will delete all point requests, all profiles/users except the caller,
@@ -262,7 +276,7 @@ class SupabaseService {
         if (status === 'SUBSCRIBED') {
           console.log(`Subscribed to ${table} changes.`);
         }
-        if(err) {
+        if (err) {
           console.error(`Subscription error on ${table}:`, err);
         }
       });

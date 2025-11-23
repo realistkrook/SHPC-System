@@ -25,38 +25,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     const session = await supabase.getSession();
     if (session?.user) {
-      // Fix: Map Supabase user to local User type to resolve type mismatch.
-      setUser({ id: session.user.id, email: session.user.email || '' });
       const userProfile = await supabase.getProfile(session.user.id);
-      setProfile(userProfile);
+      if (userProfile) {
+        setUser({ id: session.user.id, email: session.user.email || '' });
+        setProfile(userProfile);
+      } else {
+        // Profile fetch failed (or timeout). Sign out to prevent stuck state.
+        console.warn('Profile fetch failed. Signing out to ensure clean state.');
+        await supabase.signOut();
+        setUser(null);
+        setProfile(null);
+      }
     } else {
       setUser(null);
       setProfile(null);
     }
     setLoading(false);
   }, []);
-  
+
   useEffect(() => {
     checkUser();
-    
-    // Fix: The custom `onAuthStateChange` method returns the subscription object directly.
-    // The original destructuring `const { data: authListener } = ...` was incorrect.
+
     const authListener = supabase.onAuthStateChange(async (_event, session) => {
-        const currentUser = session?.user ?? null;
-        if (currentUser) {
-            // Fix: Map Supabase user to local User type to resolve type mismatch.
-            setUser({ id: currentUser.id, email: currentUser.email || '' });
-            const userProfile = await supabase.getProfile(currentUser.id);
-            setProfile(userProfile);
-        } else {
-            setUser(null);
-            setProfile(null);
-        }
-        setLoading(false);
+      const currentUser = session?.user ?? null;
+      if (currentUser) {
+        setUser({ id: currentUser.id, email: currentUser.email || '' });
+        const userProfile = await supabase.getProfile(currentUser.id);
+        setProfile(userProfile);
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+      setLoading(false);
     });
 
     return () => {
-        authListener?.unsubscribe();
+      authListener?.unsubscribe();
     };
   }, [checkUser]);
 

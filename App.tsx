@@ -21,29 +21,29 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<PublicLeaderboardPage />} />
             <Route path="/screen" element={<TvScreenPage />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute allowedRoles={[UserRole.Teacher, UserRole.WhanauLeader, UserRole.Admin]}>
                   <TeacherDashboardPage />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/leader" 
+            <Route
+              path="/leader"
               element={
                 <ProtectedRoute allowedRoles={[UserRole.WhanauLeader, UserRole.Admin]}>
                   <LeaderDashboardPage />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/admin" 
+            <Route
+              path="/admin"
               element={
                 <ProtectedRoute allowedRoles={[UserRole.Admin]}>
                   <AdminDashboardPage />
                 </ProtectedRoute>
-              } 
+              }
             />
           </Route>
         </Routes>
