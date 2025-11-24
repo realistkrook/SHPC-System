@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
@@ -17,7 +17,7 @@ function App() {
   return (
     <AuthProvider>
       <DebugOverlay />
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<Layout />}>
@@ -49,7 +49,7 @@ function App() {
             />
           </Route>
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
