@@ -7,13 +7,13 @@ const TeacherDashboardPage: React.FC = () => {
   const { profile } = useAuth();
   const [houses, setHouses] = useState<House[]>([]);
   const [myRequests, setMyRequests] = useState<PointRequest[]>([]);
-  
+
   // Form state
   const [selectedHouse, setSelectedHouse] = useState('');
   const [points, setPoints] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [pageError, setPageError] = useState<string | null>(null);
 
   const fetchInitialData = useCallback(async () => {
@@ -25,7 +25,7 @@ const TeacherDashboardPage: React.FC = () => {
       if (houseData.length > 0) {
         setSelectedHouse(houseData[0].id);
       }
-      const requestData = await supabase.getPointRequests();
+      const requestData = await supabase.getPointRequests(profile.id);
       setMyRequests(requestData);
     } catch (err: any) {
       setPageError(err.message);
@@ -39,7 +39,7 @@ const TeacherDashboardPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile || !selectedHouse || !points || !reason) {
-      setMessage({type: 'error', text: 'Please fill out all fields.'});
+      setMessage({ type: 'error', text: 'Please fill out all fields.' });
       return;
     }
     setSubmitting(true);
@@ -51,33 +51,33 @@ const TeacherDashboardPage: React.FC = () => {
         points: parseInt(points, 10),
         reason,
       });
-      setMessage({type: 'success', text: 'Point request submitted successfully!'});
+      setMessage({ type: 'success', text: 'Point request submitted successfully!' });
       setPoints('');
       setReason('');
       // Refresh my requests
-      const requestData = await supabase.getPointRequests();
+      const requestData = await supabase.getPointRequests(profile.id);
       setMyRequests(requestData);
     } catch (error: any) {
-      setMessage({type: 'error', text: error.message || 'Failed to submit request.'});
+      setMessage({ type: 'error', text: error.message || 'Failed to submit request.' });
     } finally {
       setSubmitting(false);
     }
   };
-  
+
   const statusColor = (status: PointRequestStatus) => {
-    switch(status) {
-        case PointRequestStatus.Approved: return 'text-green-400 bg-green-900/50';
-        case PointRequestStatus.Rejected: return 'text-red-400 bg-red-900/50';
-        case PointRequestStatus.Pending: return 'text-yellow-400 bg-yellow-900/50';
+    switch (status) {
+      case PointRequestStatus.Approved: return 'text-green-400 bg-green-900/50';
+      case PointRequestStatus.Rejected: return 'text-red-400 bg-red-900/50';
+      case PointRequestStatus.Pending: return 'text-yellow-400 bg-yellow-900/50';
     }
   }
 
   if (pageError) {
     return (
-        <div className="p-4 bg-red-800/50 text-red-300 rounded-md shadow-lg">
-            <h3 className="font-bold text-lg mb-2">Error loading page data</h3>
-            <p className="font-mono text-sm">{pageError}</p>
-        </div>
+      <div className="p-4 bg-red-800/50 text-red-300 rounded-md shadow-lg">
+        <h3 className="font-bold text-lg mb-2">Error loading page data</h3>
+        <p className="font-mono text-sm">{pageError}</p>
+      </div>
     );
   }
 

@@ -213,8 +213,8 @@ class SupabaseService {
   // POINT REQUEST METHODS
   // =================================================================
 
-  async getPointRequests(): Promise<PointRequest[]> {
-    const { data, error } = await this.supabase
+  async getPointRequests(userId?: string): Promise<PointRequest[]> {
+    let query = this.supabase
       .from('point_requests')
       .select(`
             *,
@@ -223,6 +223,12 @@ class SupabaseService {
             reviewer:profiles!reviewed_by ( full_name )
         `)
       .order('submitted_at', { ascending: false });
+
+    if (userId) {
+      query = query.eq('teacher_id', userId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       throw new Error(`Failed to fetch point requests: ${error.message}`);
