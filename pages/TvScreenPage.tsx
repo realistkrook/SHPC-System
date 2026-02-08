@@ -109,20 +109,31 @@ const TvScreenPage: React.FC = () => {
               #{index + 1}
             </div>
 
-            <div className="flex flex-col items-center space-y-6 relative z-10 w-full">
-              <div className="bg-white/20 p-6 rounded-full backdrop-blur-md shadow-inner">
-                <HouseIcon houseId={house.id} className="w-24 h-24 md:w-32 md:h-32 text-white drop-shadow-2xl" />
-              </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-wide drop-shadow-md text-center uppercase break-words w-full leading-none">
-                {house.name}
-              </h2>
-            </div>
+            {/* Dynamic content styling based on background brightness */}
+            {(() => {
+              const isLight = ['bg-white', 'bg-yellow-500', 'bg-yellow-400'].some(c => house.color.includes(c));
+              const textColor = isLight ? "text-slate-900" : "text-white";
+              const iconBg = isLight ? "bg-black/10 shadow-xl" : "bg-white/20 shadow-inner";
 
-            <div className="mt-8 bg-black/20 px-8 py-4 rounded-2xl backdrop-blur-md border border-white/10 relative z-10">
-              <p className="text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter tabular-nums drop-shadow-xl leading-none">
-                {house.points.toLocaleString()}
-              </p>
-            </div>
+              return (
+                <>
+                  <div className="flex flex-col items-center space-y-6 relative z-10 w-full">
+                    <div className={clsx("p-6 rounded-full backdrop-blur-md", iconBg)}>
+                      <HouseIcon houseId={house.id} className="w-24 h-24 md:w-32 md:h-32 drop-shadow-2xl" />
+                    </div>
+                    <h2 className={clsx("text-4xl md:text-5xl lg:text-6xl font-black tracking-wide drop-shadow-md text-center uppercase break-words w-full leading-none", textColor)}>
+                      {house.name}
+                    </h2>
+                  </div>
+
+                  <div className="mt-8 bg-black/20 px-8 py-4 rounded-2xl backdrop-blur-md border border-white/10 relative z-10">
+                    <p className={clsx("text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter tabular-nums drop-shadow-xl leading-none", textColor)}>
+                      {house.points.toLocaleString()}
+                    </p>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>

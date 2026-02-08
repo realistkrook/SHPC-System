@@ -64,10 +64,10 @@ const PublicLeaderboardPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-16"
       >
-        <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 drop-shadow-sm mb-4">
+        <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-slate-200 drop-shadow-sm mb-4">
           House Leaderboard
         </h1>
-        <p className="text-slate-400 text-lg md:text-xl font-medium tracking-wide uppercase">
+        <p className="text-slate-200 text-lg md:text-xl font-medium tracking-wide uppercase">
           Aotea College House Competition
         </p>
       </motion.div>

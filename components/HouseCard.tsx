@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
@@ -56,12 +55,12 @@ const HouseCard: React.FC<HouseCardProps> = ({ house, rank, maxPoints }) => {
             <div className="flex items-center gap-3 mb-2">
               <span className={cn(
                 "text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm",
-                isTop3 ? "bg-white/10 text-white border border-white/10" : "bg-slate-700/50 text-slate-400 border border-slate-600/30"
+                isTop3 ? "bg-white/10 text-white border border-white/10" : "bg-white/5 text-slate-200 border border-white/10"
               )}>
                 {rankText[rank]}
               </span>
             </div>
-            <h2 className={cn("text-3xl sm:text-4xl font-black tracking-tight mt-1 truncate", house.textColor)}>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight mt-1 truncate text-white">
               {house.name}
             </h2>
           </div>
@@ -78,7 +77,7 @@ const HouseCard: React.FC<HouseCardProps> = ({ house, rank, maxPoints }) => {
             <span className="text-5xl sm:text-6xl font-black text-white tracking-tighter tabular-nums">
               {house.points.toLocaleString()}
             </span>
-            <span className="text-sm sm:text-base text-slate-400 font-medium uppercase tracking-wide">points</span>
+            <span className="text-sm sm:text-base text-slate-200 font-medium uppercase tracking-wide">points</span>
           </div>
 
           <div className="relative h-4 w-full bg-slate-900/50 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">

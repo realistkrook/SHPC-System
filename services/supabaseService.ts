@@ -9,6 +9,7 @@ const supabaseAnonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY ?? (typ
 if (!supabaseUrl || !supabaseAnonKey) {
   // Warn in dev so it's obvious to the developer; runtime will still surface errors when requests fail.
   // eslint-disable-next-line no-console
+  console.warn('Warning: VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set. Configure your .env or environment variables.');
 }
 
 class SupabaseService {
@@ -158,19 +159,26 @@ class SupabaseService {
     }
 
     const houseColorMap: { [key: string]: string } = {
-      pukeko: 'bg-blue-600',
-      Pukeko: 'bg-blue-600',
-      kereru: 'bg-purple-600',
-      Kereru: 'bg-purple-600',
-      korimako: 'bg-green-600',
-      Korimako: 'bg-green-600',
-      kotuku: 'bg-yellow-500',
-      Kotuku: 'bg-yellow-500',
-      // Fallbacks if IDs are different
-      'Pūkeko': 'bg-blue-600',
-      'Kererū': 'bg-purple-600',
-      'Kōrimako': 'bg-green-600',
-      'Kōtuku': 'bg-yellow-500',
+      pukeko: 'bg-purple-600',
+      Pukeko: 'bg-purple-600',
+      'Pūkeko': 'bg-purple-600',
+      'pūkeko': 'bg-purple-600',
+
+      kereru: 'bg-green-600',
+      Kereru: 'bg-green-600',
+      'Kererū': 'bg-green-600',
+      'kererū': 'bg-green-600',
+      keruru: 'bg-green-600', // Handling potential typo from HouseIcon
+
+      korimako: 'bg-yellow-500',
+      Korimako: 'bg-yellow-500',
+      'Kōrimako': 'bg-yellow-500',
+      'kōrimako': 'bg-yellow-500',
+
+      kotuku: 'bg-white',
+      Kotuku: 'bg-white', // Using white as requested
+      'Kōtuku': 'bg-white',
+      'kōtuku': 'bg-white',
     };
 
     return data.map(h => {

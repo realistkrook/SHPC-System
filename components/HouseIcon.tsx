@@ -9,11 +9,22 @@ interface HouseIconProps {
 const HouseIcon: React.FC<HouseIconProps> = ({ houseId, className }) => {
   const houseImageMap: { [key: string]: string } = {
     // Use the uploaded photos (filenames are as uploaded in public/images/)
-    keruru: '/images/Kereru Aotea Birds.png',
+    // Kereru
+    kereru: '/images/Kereru Aotea Birds.png',
+    kererū: '/images/Kereru Aotea Birds.png',
+    keruru: '/images/Kereru Aotea Birds.png', // Keep existing just in case
+
+    // Korimako
     korimako: '/images/Aotea Birds Korimako.png',
+    kōrimako: '/images/Aotea Birds Korimako.png',
+
+    // Kotuku
     kotuku: '/images/Aotea Birds Kotuku.png',
-    // 'raukawa' was replaced by 'pukeko'
+    kōtuku: '/images/Aotea Birds Kotuku.png',
+
+    // Pukeko
     pukeko: '/images/Aotea Birds Pukeko.png',
+    pūkeko: '/images/Aotea Birds Pukeko.png',
   };
 
   const src = houseImageMap[houseId];
