@@ -95,6 +95,17 @@ const PublicLeaderboardPage: React.FC = () => {
           ))
         )}
       </div>
+
+      <div className="mt-16 text-center pb-8 opacity-75 hover:opacity-100 transition-opacity duration-300">
+        <a href="https://opside.tech" target="_blank" rel="noopener noreferrer" className="inline-block hover:opacity-80 transition-opacity">
+          <img
+            src="/images/Opside Powered By 1200x300.png"
+            alt="Powered by Opside"
+            className="h-12 mx-auto object-contain"
+            draggable={false}
+          />
+        </a>
+      </div>
     </div>
   );
 };
