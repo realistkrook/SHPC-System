@@ -266,13 +266,7 @@ class SupabaseService {
   }
 
   async rejectRequest(requestId: string): Promise<void> {
-    const session = await this.getSession();
-    if (!session?.user) throw new Error("You must be logged in.");
-
-    const { error } = await this.supabase
-      .from('point_requests')
-      .update({ status: PointRequestStatus.Rejected, reviewed_by: session.user.id })
-      .eq('id', requestId);
+    const { error } = await this.supabase.rpc('reject_request', { request_id: requestId });
     if (error) throw new Error(`Failed to reject request: ${error.message}`);
   }
 
