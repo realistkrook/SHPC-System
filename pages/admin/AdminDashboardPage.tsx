@@ -314,8 +314,8 @@ const ExportTVSection = () => {
                 </button>
             </div>
 
-            {/* Hidden template for html2canvas */}
-            <div className="overflow-hidden h-0 w-0 opacity-0 pointer-events-none">
+            {/* Hidden template for html-to-image */}
+            <div style={{ position: 'fixed', left: '-20000px', top: '-20000px', width: '1080px', height: '1920px' }}>
                 <TVExportTemplate ref={exportRef} houses={houses} />
             </div>
         </div>
