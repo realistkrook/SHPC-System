@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabaseService';
 import { House, Profile, UserRole } from '../../types';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import { TVExportTemplate } from '../../components/TVExportTemplate';
 
 const AdminDashboardPage: React.FC = () => {
@@ -265,18 +265,21 @@ const ExportTVSection = () => {
             // Need to make sure fonts and images are loaded. We can wait a small tick.
             await new Promise(res => setTimeout(res, 500));
 
-            const canvas = await html2canvas(exportRef.current, {
+            const dataUrl = await toPng(exportRef.current, {
                 width: 1080,
                 height: 1920,
-                scale: 1, // TV is 1080x1920, so 1x scale is 1080x1920
-                useCORS: true,
                 backgroundColor: '#000000',
+                pixelRatio: 1, // TV is 1080x1920, so 1x scale is 1080x1920
+                skipFonts: false,
+                style: {
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                }
             });
 
-            const image = canvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
             link.download = `Aotea-Leaderboard-TV-${new Date().toISOString().split('T')[0]}.png`;
-            link.href = image;
+            link.href = dataUrl;
             link.click();
         } catch (error) {
             console.error("Error creating image:", error);
