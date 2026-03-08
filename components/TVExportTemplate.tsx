@@ -50,25 +50,25 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 translate-x-1/2"></div>
                                 )}
 
-                                <div className="flex items-center gap-16 z-10 w-[65%]">
-                                    <div className={clsx("w-56 h-56 rounded-full flex items-center justify-center border-4", isLightColor ? "bg-black/10 border-black/20" : "bg-white/20 border-white/20 backdrop-blur-md shrink-0")}>
-                                        <HouseIcon houseId={house.id} className="w-36 h-36" />
+                                <div className="flex items-center gap-10 z-10 flex-1 min-w-0">
+                                    <div className={clsx("w-40 h-40 rounded-full flex items-center justify-center border-4 shrink-0", isLightColor ? "bg-black/10 border-black/20" : "bg-white/20 border-white/20 backdrop-blur-md")}>
+                                        <HouseIcon houseId={house.id} className="w-24 h-24" />
                                     </div>
-                                    <div className="flex flex-col">
-                                        <span className={clsx("text-5xl font-bold opacity-80 uppercase tracking-widest mb-2", isLightColor ? "text-slate-900" : "text-white")}>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className={clsx("text-4xl font-bold opacity-80 uppercase tracking-widest mb-1", isLightColor ? "text-slate-900" : "text-white")}>
                                             Rank #{index + 1}
                                         </span>
-                                        <h2 className={clsx("text-[120px] uppercase font-black tracking-tighter leading-[0.85] truncate max-w-[500px]", isLightColor ? "text-slate-900" : "text-white")}>
+                                        <h2 className={clsx("text-[90px] uppercase font-black tracking-tighter leading-none break-words", isLightColor ? "text-slate-900" : "text-white")}>
                                             {house.name}
                                         </h2>
                                     </div>
                                 </div>
 
-                                <div className="z-10 flex flex-col justify-end items-end w-[35%] py-8">
-                                    <span className={clsx("text-[150px] font-black tabular-nums tracking-tighter leading-none mb-4", isLightColor ? "text-slate-900" : "text-white")}>
+                                <div className="z-10 flex flex-col justify-center items-end shrink-0 pl-6">
+                                    <span className={clsx("text-[120px] font-black tabular-nums tracking-tighter leading-none mb-2", isLightColor ? "text-slate-900" : "text-white")}>
                                         {house.points.toLocaleString()}
                                     </span>
-                                    <span className={clsx("text-4xl font-bold uppercase tracking-widest opacity-80", isLightColor ? "text-slate-900" : "text-white")}>
+                                    <span className={clsx("text-3xl font-bold uppercase tracking-widest opacity-80", isLightColor ? "text-slate-900" : "text-white")}>
                                         Points
                                     </span>
                                 </div>
