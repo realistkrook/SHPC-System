@@ -22,7 +22,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                 {/* Header - Brutalist & Clean */}
                 <div className="pt-24 pb-12 px-16 text-center z-10 bg-black flex flex-col items-center justify-center">
                     <h1 className="text-[110px] font-black uppercase tracking-tighter leading-none mb-6">
-                        Aotea Leaderboard
+                        Aotea House Leaderboard
                     </h1>
                     <p className="text-[45px] text-gray-400 font-bold tracking-widest uppercase border-y-4 border-gray-800 py-4 px-12 inline-block">
                         Current Standings
@@ -75,13 +75,6 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                             </div>
                         );
                     })}
-                </div>
-
-                {/* Footer */}
-                <div className="h-40 bg-zinc-950 flex flex-col items-center justify-center border-t-[12px] border-zinc-900 mt-auto">
-                    <p className="text-5xl text-zinc-600 font-bold uppercase tracking-widest">
-                        Generated {new Date().toLocaleDateString('en-NZ')}
-                    </p>
                 </div>
             </div>
         );
