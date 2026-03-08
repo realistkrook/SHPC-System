@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabaseService';
 import { House, Profile, UserRole } from '../../types';
+import html2canvas from 'html2canvas';
+import { TVExportTemplate } from '../../components/TVExportTemplate';
 
 const AdminDashboardPage: React.FC = () => {
     return (
@@ -9,6 +11,7 @@ const AdminDashboardPage: React.FC = () => {
             <UserManagement />
             <AllowedEmails />
             <HouseManagement />
+            <ExportTVSection />
             <DangerZone />
         </div>
     );
@@ -235,6 +238,86 @@ const HouseManagement = () => {
         </div>
     )
 }
+
+const ExportTVSection = () => {
+    const [houses, setHouses] = useState<House[]>([]);
+    const [isExporting, setIsExporting] = useState(false);
+    const exportRef = React.useRef<HTMLDivElement>(null);
+
+    const fetchHouses = useCallback(async () => {
+        try {
+            const data = await supabase.getHouses();
+            setHouses(data);
+        } catch (err: any) {
+            console.error("Error fetching houses for export", err);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchHouses();
+    }, [fetchHouses]);
+
+    const handleExport = async () => {
+        if (!exportRef.current || houses.length === 0) return;
+        setIsExporting(true);
+
+        try {
+            // Need to make sure fonts and images are loaded. We can wait a small tick.
+            await new Promise(res => setTimeout(res, 500));
+
+            const canvas = await html2canvas(exportRef.current, {
+                width: 1080,
+                height: 1920,
+                scale: 1, // TV is 1080x1920, so 1x scale is 1080x1920
+                useCORS: true,
+                backgroundColor: '#000000',
+            });
+
+            const image = canvas.toDataURL('image/png', 1.0);
+            const link = document.createElement('a');
+            link.download = `Aotea-Leaderboard-TV-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = image;
+            link.click();
+        } catch (error) {
+            console.error("Error creating image:", error);
+            alert("Failed to export image.");
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+    return (
+        <div className="bg-gray-800 shadow-xl rounded-lg p-6 md:p-8 border-l-4 border-teal-500 relative overflow-hidden">
+            {/* Background design element */}
+            <div className="absolute -right-20 -top-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-3xl font-bold text-white mb-2">TV Display Export</h2>
+                    <p className="text-gray-400 font-medium max-w-xl">
+                        Generate a high-contrast, vertical PNG image optimized for 1080x1920 screens. Ready to be sent straight to the TV.
+                    </p>
+                </div>
+
+                <button
+                    onClick={handleExport}
+                    disabled={isExporting || houses.length === 0}
+                    className="flex shrink-0 items-center justify-center space-x-3 px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span className="text-lg">{isExporting ? 'Generating Image...' : 'Download TV PNG'}</span>
+                </button>
+            </div>
+
+            {/* Hidden template for html2canvas */}
+            <div className="overflow-hidden h-0 w-0 opacity-0 pointer-events-none">
+                <TVExportTemplate ref={exportRef} houses={houses} />
+            </div>
+        </div>
+    );
+};
 
 const DangerZone = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
