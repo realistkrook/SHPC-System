@@ -55,10 +55,10 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                         <HouseIcon houseId={house.id} className="w-24 h-24" />
                                     </div>
                                     <div className="flex flex-col min-w-0">
-                                        <span className={clsx("text-4xl font-bold opacity-80 uppercase tracking-widest mb-1", isLightColor ? "text-slate-900" : "text-white")}>
+                                        <span className={clsx("text-4xl font-bold opacity-80 uppercase tracking-widest mb-1 whitespace-nowrap", isLightColor ? "text-slate-900" : "text-white")}>
                                             Rank #{index + 1}
                                         </span>
-                                        <h2 className={clsx("text-[90px] uppercase font-black tracking-tighter leading-none break-words", isLightColor ? "text-slate-900" : "text-white")}>
+                                        <h2 className={clsx("text-[85px] uppercase font-black tracking-tighter leading-none whitespace-nowrap", isLightColor ? "text-slate-900" : "text-white")}>
                                             {house.name}
                                         </h2>
                                     </div>
