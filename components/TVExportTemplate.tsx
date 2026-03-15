@@ -42,7 +42,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     "flex-1 flex items-center justify-between rounded-[48px] border-8 transition-none",
                                     house.color,
                                     index === 0 ? "border-white shadow-[0_0_120px_rgba(255,255,255,0.4)] relative overflow-hidden" : "border-black/20 opacity-95",
-                                    "px-16"
+                                    "pl-8 pr-16"
                                 )}
                             >
                                 {/* Subtle shine effect on the leader */}
@@ -52,7 +52,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
 
                                 <div className="flex items-center gap-10 z-10 flex-1 min-w-0">
                                     <div className={clsx("w-40 h-40 rounded-full flex items-center justify-center border-4 shrink-0", isLightColor ? "bg-black/10 border-black/20" : "bg-white/20 border-white/20 backdrop-blur-md")}>
-                                        <HouseIcon houseId={house.id} className="w-24 h-24" />
+                                        <HouseIcon houseId={house.id} className="w-32 h-32" />
                                     </div>
                                     <div className="flex flex-col min-w-0">
                                         <span className={clsx("text-4xl font-bold opacity-80 uppercase tracking-widest mb-1 whitespace-nowrap", isLightColor ? "text-slate-900" : "text-white")}>
