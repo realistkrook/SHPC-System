@@ -12,7 +12,7 @@ const TvScreenPage: React.FC = () => {
   useEffect(() => {
     const fetchHouses = async () => {
       try {
-        const data = await supabase.getHouses();
+        const data = await supabase.getPublishedHouses();
         setHouses(data.sort((a, b) => b.points - a.points));
       } catch (err: any) {
         setError(err.message);
@@ -20,8 +20,6 @@ const TvScreenPage: React.FC = () => {
     };
 
     fetchHouses();
-    const subscription = supabase.on('houses', '*', () => fetchHouses());
-    return () => supabase.removeSubscription(subscription);
   }, []);
 
   const containerRef = React.useRef<HTMLDivElement>(null);

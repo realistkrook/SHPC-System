@@ -24,6 +24,8 @@ export interface House {
   color: string; // e.g., "bg-purple-600"
   textColor: string; // e.g., "text-purple-600"
   points: number;
+  published_points?: number;
+  published_at?: string;
 }
 
 export enum PointRequestStatus {

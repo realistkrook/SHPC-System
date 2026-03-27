@@ -10,14 +10,23 @@ const PublicLeaderboardPage: React.FC = () => {
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHouses = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await supabase.getHouses();
-        setHouses(data.sort((a, b) => b.points - a.points));
+        const data = await supabase.getPublishedHouses();
+        const sorted = data.sort((a, b) => b.points - a.points);
+        setHouses(sorted);
+        // Get the latest published_at from all houses
+        const latest = data
+          .map(h => h.published_at)
+          .filter(Boolean)
+          .sort()
+          .pop();
+        setPublishedAt(latest || null);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -26,19 +35,6 @@ const PublicLeaderboardPage: React.FC = () => {
     };
 
     fetchHouses();
-
-    const subscription = supabase.on('houses', 'UPDATE', (payload) => {
-      setHouses(currentHouses => {
-        const updatedHouses = currentHouses.map(h =>
-          h.id === (payload.new as any).id ? { ...h, ...payload.new } : h
-        );
-        return updatedHouses.sort((a, b) => b.points - a.points);
-      });
-    });
-
-    return () => {
-      supabase.removeSubscription(subscription);
-    };
   }, []);
 
   const maxPoints = Math.max(...houses.map(h => h.points), 1);
@@ -70,6 +66,14 @@ const PublicLeaderboardPage: React.FC = () => {
         <p className="text-slate-200 text-lg md:text-xl font-medium tracking-wide uppercase">
           Aotea College House Competition
         </p>
+        {publishedAt && (
+          <p className="text-slate-400 text-sm mt-3">
+            Last updated {new Date(publishedAt).toLocaleDateString('en-NZ', {
+              day: 'numeric', month: 'long', year: 'numeric',
+              hour: 'numeric', minute: '2-digit', hour12: true,
+            })}
+          </p>
+        )}
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8">

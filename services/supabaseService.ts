@@ -153,7 +153,7 @@ class SupabaseService {
   async getHouses(): Promise<House[]> {
     const { data, error } = await this.supabase
       .from('houses')
-      .select('id, name, points');
+      .select('id, name, points, published_points, published_at');
     if (error) {
       throw new Error(`Failed to fetch houses: ${error.message}`);
     }
@@ -198,6 +198,27 @@ class SupabaseService {
         textColor: color.replace('bg-', 'text-')
       };
     });
+  }
+
+  /**
+   * Returns houses with published_points as the points value.
+   * Used by public-facing pages (leaderboard, TV) that should only show published data.
+   */
+  async getPublishedHouses(): Promise<House[]> {
+    const houses = await this.getHouses();
+    return houses.map(h => ({
+      ...h,
+      points: h.published_points ?? h.points,
+    }));
+  }
+
+  /**
+   * Publishes current points to the public leaderboard.
+   * Copies points → published_points for all houses.
+   */
+  async publishPoints(): Promise<void> {
+    const { error } = await this.supabase.rpc('publish_points');
+    if (error) throw new Error(`Failed to publish points: ${error.message}`);
   }
 
   async updateHousePoints(houseId: string, points: number): Promise<void> {

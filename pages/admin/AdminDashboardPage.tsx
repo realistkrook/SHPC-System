@@ -157,6 +157,8 @@ const HouseManagement = () => {
     const [error, setError] = useState<string | null>(null);
     const [localPoints, setLocalPoints] = useState<{ [key: string]: string }>({});
     const [saving, setSaving] = useState<{ [key: string]: boolean }>({});
+    const [isPublishing, setIsPublishing] = useState(false);
+    const [publishSuccess, setPublishSuccess] = useState(false);
 
     const fetchHouses = useCallback(async () => {
         setError(null);
@@ -208,14 +210,75 @@ const HouseManagement = () => {
         }
     }
 
+    const handlePublish = async () => {
+        if (!window.confirm('Publish current points to the public leaderboard? This will update what students and visitors see.')) return;
+        setIsPublishing(true);
+        setPublishSuccess(false);
+        try {
+            await supabase.publishPoints();
+            await fetchHouses();
+            setPublishSuccess(true);
+            setTimeout(() => setPublishSuccess(false), 4000);
+        } catch (err: any) {
+            alert(`Failed to publish: ${err.message}`);
+        } finally {
+            setIsPublishing(false);
+        }
+    };
+
+    // Get the latest published_at
+    const latestPublishedAt = houses
+        .map(h => h.published_at)
+        .filter(Boolean)
+        .sort()
+        .pop();
+
+    const hasUnpublishedChanges = houses.some(h => h.points !== (h.published_points ?? 0));
+
     return (
         <div className="bg-gray-800 shadow-xl rounded-lg p-6 md:p-8">
             <h2 className="text-3xl font-bold text-white mb-6">House Point Management</h2>
             {error && <div className="p-3 mb-4 rounded-md text-sm bg-red-800/50 text-red-300">{error}</div>}
+
+            {/* Publish Section */}
+            <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 className="text-lg font-semibold text-white mb-1">Publish to Leaderboard</h3>
+                    {latestPublishedAt ? (
+                        <p className="text-sm text-gray-400">
+                            Last published: {new Date(latestPublishedAt).toLocaleDateString('en-NZ', {
+                                day: 'numeric', month: 'long', year: 'numeric',
+                                hour: 'numeric', minute: '2-digit', hour12: true,
+                            })}
+                        </p>
+                    ) : (
+                        <p className="text-sm text-gray-500">Points have never been published yet.</p>
+                    )}
+                    {hasUnpublishedChanges && (
+                        <p className="text-sm text-amber-400 mt-1">⚠ There are unpublished changes.</p>
+                    )}
+                    {publishSuccess && (
+                        <p className="text-sm text-green-400 mt-1">✓ Points published successfully!</p>
+                    )}
+                </div>
+                <button
+                    onClick={handlePublish}
+                    disabled={isPublishing}
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                >
+                    {isPublishing ? 'Publishing...' : '🚀 Publish Points'}
+                </button>
+            </div>
+
             <div className="space-y-4">
                 {houses.map(h => (
                     <div key={h.id} className="flex items-center justify-between bg-gray-900 p-4 rounded-lg">
-                        <span className={`font-bold text-lg ${h.textColor}`}>{h.name}</span>
+                        <div>
+                            <span className={`font-bold text-lg ${h.textColor}`}>{h.name}</span>
+                            {h.published_points !== undefined && h.published_points !== h.points && (
+                                <span className="text-xs text-gray-500 ml-2">(public: {h.published_points})</span>
+                            )}
+                        </div>
                         <div className="flex items-center space-x-2">
                             <input
                                 type="number"
@@ -249,7 +312,7 @@ const ExportTVSection = () => {
 
     const fetchHouses = useCallback(async () => {
         try {
-            const data = await supabase.getHouses();
+            const data = await supabase.getPublishedHouses();
             setHouses(data);
         } catch (err: any) {
             console.error("Error fetching houses for export", err);

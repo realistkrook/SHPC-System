@@ -35,18 +35,20 @@ CREATE TABLE IF NOT EXISTS public.houses (
   id text PRIMARY KEY,
   name text NOT NULL,
   points integer NOT NULL DEFAULT 0,
+  published_points integer NOT NULL DEFAULT 0,
+  published_at timestamptz,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 
 -- Seed some default houses if they don't exist
-INSERT INTO public.houses (id, name, points)
+INSERT INTO public.houses (id, name, points, published_points)
 SELECT * FROM (VALUES
-  ('pukeko','Pūkeko',0),
-  ('keruru','Kererū',0),
-  ('korimako','Kōrimako',0),
-  ('kotuku','Kōtuku',0)
-) AS v(id,name,points)
+  ('pukeko','Pūkeko',0,0),
+  ('keruru','Kererū',0,0),
+  ('korimako','Kōrimako',0,0),
+  ('kotuku','Kōtuku',0,0)
+) AS v(id,name,points,published_points)
 WHERE NOT EXISTS (SELECT 1 FROM public.houses h WHERE h.id = v.id);
 
 -- 5) Point requests table
