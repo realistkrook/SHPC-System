@@ -42,10 +42,10 @@ CREATE TABLE IF NOT EXISTS public.houses (
 -- Seed some default houses if they don't exist
 INSERT INTO public.houses (id, name, points)
 SELECT * FROM (VALUES
-  ('pukeko','Pukeko',0),
+  ('pukeko','Pūkeko',0),
   ('keruru','Kererū',0),
-  ('korimako','Korimako',0),
-  ('kotuku','Kotuku',0)
+  ('korimako','Kōrimako',0),
+  ('kotuku','Kōtuku',0)
 ) AS v(id,name,points)
 WHERE NOT EXISTS (SELECT 1 FROM public.houses h WHERE h.id = v.id);
 

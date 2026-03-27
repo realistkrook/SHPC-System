@@ -181,10 +181,19 @@ class SupabaseService {
       'kōtuku': 'bg-white',
     };
 
+    const houseNameMap: { [key: string]: string } = {
+      pukeko: 'Pūkeko',
+      kereru: 'Kererū',
+      keruru: 'Kererū',
+      korimako: 'Kōrimako',
+      kotuku: 'Kōtuku',
+    };
+
     return data.map(h => {
       const color = houseColorMap[h.id] || 'bg-gray-500';
       return {
         ...h,
+        name: houseNameMap[h.id.toLowerCase()] || h.name,
         color,
         textColor: color.replace('bg-', 'text-')
       };
@@ -234,10 +243,18 @@ class SupabaseService {
       throw new Error(`Failed to fetch point requests: ${error.message}`);
     }
 
+    const houseNameMap: { [key: string]: string } = {
+      pukeko: 'Pūkeko',
+      kereru: 'Kererū',
+      keruru: 'Kererū',
+      korimako: 'Kōrimako',
+      kotuku: 'Kōtuku',
+    };
+
     return data.map((req: any) => ({
       ...req,
       teacher_name: req.teacher?.full_name || 'N/A',
-      house_name: req.house?.name || 'N/A',
+      house_name: houseNameMap[(req.house_id || '').toLowerCase()] || req.house?.name || 'N/A',
       reviewed_by_name: req.reviewer?.full_name || null,
     }));
   }
