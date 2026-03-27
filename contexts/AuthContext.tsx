@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // 2. Listen for changes
     const authListener = supabase.onAuthStateChange(async (event, session) => {
-      // console.log("Auth state change:", event, session?.user?.email);
+      console.log("Auth state change:", event);
 
       if (event === 'SIGNED_OUT') {
         if (mounted) {
@@ -118,31 +118,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser({ id: session.user.id, email: session.user.email || '' });
         }
 
-        // We might already have the profile from initializeAuth, but let's be safe
-        // If we are switching users, we definitely need it.
-        const userProfile = await supabase.getProfile(session.user.id);
+        // Only re-fetch profile on SIGNED_IN (initial login / OAuth callback).
+        // TOKEN_REFRESHED fires periodically — keep the existing profile to avoid
+        // transient getProfile() failures from wiping the session.
+        if (event === 'SIGNED_IN') {
+          const userProfile = await supabase.getProfile(session.user.id);
 
-        if (mounted) {
-          if (userProfile) {
-            setProfile(userProfile);
-          } else {
-            // Only sign out if we really expected a profile (e.g. SIGNED_IN)
-            // But be careful not to loop.
-            if (event === 'SIGNED_IN') {
-              console.warn('Profile missing on SIGNED_IN. Signing out.');
-              // If profile is missing, it might be a new user or RLS issue.
-              // Instead of signing out immediately which causes a loop, let's set profile to null
-              // and let the UI handle "No Profile" state if needed, or redirect to a "Setup" page.
-              // But for now, to break the loop, we WON'T sign out automatically here.
-              // We'll just leave profile as null. ProtectedRoute will redirect to Login.
-              // But if we are ON Login page, we need to show an error.
+          if (mounted) {
+            if (userProfile) {
+              setProfile(userProfile);
+            } else {
+              // Profile missing on login — leave as null, ProtectedRoute will redirect.
               setProfile(null);
             }
           }
+        }
+        // For TOKEN_REFRESHED / other events, we intentionally do NOT re-fetch the profile.
+        // The existing profile state is preserved.
+
+        if (mounted) {
           setLoading(false);
         }
       } else if (!session && mounted) {
-        // Should be covered by SIGNED_OUT but just in case
         setUser(null);
         setProfile(null);
         setLoading(false);
