@@ -4,6 +4,7 @@ import { supabase } from '../../services/supabaseService';
 import { House, Profile, UserRole } from '../../types';
 import { toPng } from 'html-to-image';
 import { TVExportTemplate } from '../../components/TVExportTemplate';
+import { IGExportTemplate } from '../../components/IGExportTemplate';
 
 const AdminDashboardPage: React.FC = () => {
     return (
@@ -241,8 +242,10 @@ const HouseManagement = () => {
 
 const ExportTVSection = () => {
     const [houses, setHouses] = useState<House[]>([]);
-    const [isExporting, setIsExporting] = useState(false);
-    const exportRef = React.useRef<HTMLDivElement>(null);
+    const [isExportingTV, setIsExportingTV] = useState(false);
+    const [isExportingIG, setIsExportingIG] = useState(false);
+    const tvRef = React.useRef<HTMLDivElement>(null);
+    const igRef = React.useRef<HTMLDivElement>(null);
 
     const fetchHouses = useCallback(async () => {
         try {
@@ -257,19 +260,18 @@ const ExportTVSection = () => {
         fetchHouses();
     }, [fetchHouses]);
 
-    const handleExport = async () => {
-        if (!exportRef.current || houses.length === 0) return;
-        setIsExporting(true);
+    const handleExportTV = async () => {
+        if (!tvRef.current || houses.length === 0) return;
+        setIsExportingTV(true);
 
         try {
-            // Need to make sure fonts and images are loaded. We can wait a small tick.
             await new Promise(res => setTimeout(res, 500));
 
-            const dataUrl = await toPng(exportRef.current, {
+            const dataUrl = await toPng(tvRef.current, {
                 width: 1080,
                 height: 1920,
                 backgroundColor: '#000000',
-                pixelRatio: 1, // TV is 1080x1920, so 1x scale is 1080x1920
+                pixelRatio: 1,
                 skipFonts: false,
                 style: {
                     transform: 'scale(1)',
@@ -285,7 +287,38 @@ const ExportTVSection = () => {
             console.error("Error creating image:", error);
             alert("Failed to export image.");
         } finally {
-            setIsExporting(false);
+            setIsExportingTV(false);
+        }
+    };
+
+    const handleExportIG = async () => {
+        if (!igRef.current || houses.length === 0) return;
+        setIsExportingIG(true);
+
+        try {
+            await new Promise(res => setTimeout(res, 500));
+
+            const dataUrl = await toPng(igRef.current, {
+                width: 1080,
+                height: 1080,
+                backgroundColor: '#000000',
+                pixelRatio: 1,
+                skipFonts: false,
+                style: {
+                    transform: 'scale(1)',
+                    transformOrigin: 'top left',
+                }
+            });
+
+            const link = document.createElement('a');
+            link.download = `Aotea-Leaderboard-IG-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (error) {
+            console.error("Error creating image:", error);
+            alert("Failed to export image.");
+        } finally {
+            setIsExportingIG(false);
         }
     };
 
@@ -294,29 +327,51 @@ const ExportTVSection = () => {
             {/* Background design element */}
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">TV Display Export</h2>
-                    <p className="text-gray-400 font-medium max-w-xl">
-                        Generate a high-contrast, vertical PNG image optimized for 1080x1920 screens. Ready to be sent straight to the TV.
-                    </p>
-                </div>
+            <div className="relative z-10">
+                <h2 className="text-3xl font-bold text-white mb-2">Image Export</h2>
+                <p className="text-gray-400 font-medium max-w-xl mb-6">
+                    Generate leaderboard images for TV signage or Instagram posts.
+                </p>
 
-                <button
-                    onClick={handleExport}
-                    disabled={isExporting || houses.length === 0}
-                    className="flex shrink-0 items-center justify-center space-x-3 px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    <span className="text-lg">{isExporting ? 'Generating Image...' : 'Download TV PNG'}</span>
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    {/* TV Export Button */}
+                    <button
+                        onClick={handleExportTV}
+                        disabled={isExportingTV || houses.length === 0}
+                        className="flex items-center justify-center space-x-3 px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <div className="text-left">
+                            <span className="text-lg block">{isExportingTV ? 'Generating...' : 'TV Display'}</span>
+                            <span className="text-xs opacity-70 block">1080 × 1920 portrait</span>
+                        </div>
+                    </button>
+
+                    {/* Instagram Export Button */}
+                    <button
+                        onClick={handleExportIG}
+                        disabled={isExportingIG || houses.length === 0}
+                        className="flex items-center justify-center space-x-3 px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <div className="text-left">
+                            <span className="text-lg block">{isExportingIG ? 'Generating...' : 'Instagram Post'}</span>
+                            <span className="text-xs opacity-70 block">1080 × 1080 square</span>
+                        </div>
+                    </button>
+                </div>
             </div>
 
-            {/* Hidden template for html-to-image */}
+            {/* Hidden templates for html-to-image */}
             <div style={{ position: 'fixed', left: '-20000px', top: '-20000px', width: '1080px', height: '1920px' }}>
-                <TVExportTemplate ref={exportRef} houses={houses} />
+                <TVExportTemplate ref={tvRef} houses={houses} />
+            </div>
+            <div style={{ position: 'fixed', left: '-20000px', top: '-20000px', width: '1080px', height: '1080px' }}>
+                <IGExportTemplate ref={igRef} houses={houses} />
             </div>
         </div>
     );

@@ -12,6 +12,14 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
     ({ houses }, ref) => {
         // Sort houses by points descending
         const sortedHouses = [...houses].sort((a, b) => b.points - a.points);
+        const exportDate = new Date().toLocaleDateString('en-NZ', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        });
 
         return (
             <div
@@ -30,7 +38,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                 </div>
 
                 {/* Dynamic brutalist layout based on houses */}
-                <div className="flex-1 flex flex-col w-full h-full pb-16 px-16 gap-10">
+                <div className="flex-1 flex flex-col w-full h-full pb-6 px-16 gap-10">
                     {sortedHouses.map((house, index) => {
                         // Check if house color is naturally bright
                         const isLightColor = ['bg-white', 'bg-yellow-500', 'bg-yellow-400'].some(c => house.color.includes(c));
@@ -64,7 +72,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     </div>
                                 </div>
 
-                                <div className="z-10 flex flex-col justify-center items-end shrink-0 pl-6">
+                                <div className="z-10 flex flex-col justify-center items-center shrink-0 pl-6">
                                     <span className={clsx("text-[120px] font-black tabular-nums tracking-tighter leading-none mb-2", isLightColor ? "text-slate-900" : "text-white")}>
                                         {house.points.toLocaleString()}
                                     </span>
@@ -75,6 +83,13 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                             </div>
                         );
                     })}
+                </div>
+
+                {/* Footer */}
+                <div className="px-16 pb-10 pt-2 text-center">
+                    <span className="text-2xl text-gray-500 font-medium tracking-wide">
+                        Last updated {exportDate}
+                    </span>
                 </div>
             </div>
         );
