@@ -1,0 +1,15 @@
+{
+  "name": "aotea-house-points-postgres",
+  "version": "1.0.0",
+  "description": "Aotea College House Points — PostgreSQL version with Express backend and React frontend",
+  "private": true,
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev": "npm run dev:server & npm run dev:client",
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "db:init": "psql -U postgres -d house_points -f db/schema.sql",
+    "db:seed": "psql -U postgres -d house_points -f db/seed.sql",
+    "db:reset": "psql -U postgres -d house_points -f db/schema.sql && psql -U postgres -d house_points -f db/seed.sql"
+  }
+}
