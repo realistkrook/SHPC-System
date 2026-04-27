@@ -30,7 +30,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                 {/* Header - Brutalist & Clean */}
                 <div className="pt-24 pb-12 px-16 text-center z-10 bg-black flex flex-col items-center justify-center">
                     <h1 className="text-[110px] font-black uppercase tracking-tighter leading-none mb-6">
-                        Aotea Whanau Leaderboard
+                        Aotea Whānau Leaderboard
                     </h1>
                     <p className="text-[45px] text-gray-400 font-bold tracking-widest uppercase border-y-4 border-gray-800 py-4 px-12 inline-block">
                         Current Standings

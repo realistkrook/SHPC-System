@@ -29,7 +29,7 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
                 {/* Header */}
                 <div className="pt-12 pb-6 px-12 text-center bg-black flex flex-col items-center justify-center">
                     <h1 className="text-[64px] font-black uppercase tracking-tighter leading-none mb-3">
-                        Aotea Whanau Leaderboard
+                        Aotea Whānau Leaderboard
                     </h1>
                     <p className="text-[28px] text-gray-400 font-bold tracking-widest uppercase border-y-4 border-gray-800 py-2 px-8 inline-block">
                         Current Standings
