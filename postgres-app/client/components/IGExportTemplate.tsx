@@ -24,14 +24,14 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
             <div
                 ref={ref}
                 style={{ width: '1080px', height: '1080px' }}
-                className="bg-white text-slate-950 flex flex-col font-sans overflow-hidden"
+                className="bg-slate-100 text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header */}
-                <div className="pt-12 pb-6 px-12 text-center bg-white flex flex-col items-center justify-center">
+                <div className="pt-12 pb-6 px-12 text-center bg-slate-100 flex flex-col items-center justify-center">
                     <h1 className="text-[64px] font-black uppercase tracking-tighter leading-none mb-3">
                         Aotea Whānau Leaderboard
                     </h1>
-                    <p className="text-[28px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-200 py-2 px-8 inline-block">
+                    <p className="text-[28px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-300 py-2 px-8 inline-block">
                         Current Standings
                     </p>
                 </div>

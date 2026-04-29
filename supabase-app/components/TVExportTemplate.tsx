@@ -25,14 +25,14 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
             <div
                 ref={ref}
                 style={{ width: '1080px', height: '1920px' }}
-                className="bg-white text-slate-950 flex flex-col font-sans overflow-hidden"
+                className="bg-slate-100 text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header - Brutalist & Clean */}
-                <div className="pt-24 pb-12 px-16 text-center z-10 bg-white flex flex-col items-center justify-center">
+                <div className="pt-24 pb-12 px-16 text-center z-10 bg-slate-100 flex flex-col items-center justify-center">
                     <h1 className="text-[110px] font-black uppercase tracking-tighter leading-none mb-6">
                         Aotea Whanau Leaderboard
                     </h1>
-                    <p className="text-[45px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-200 py-4 px-12 inline-block">
+                    <p className="text-[45px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-300 py-4 px-12 inline-block">
                         Current Standings
                     </p>
                 </div>
