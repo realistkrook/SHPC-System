@@ -24,7 +24,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
         return (
             <div
                 ref={ref}
-                style={{ width: '1080px', height: '1920px' }}
+                style={{ width: '1080px', height: '1920px', backgroundColor: '#f1f5f9' }}
                 className="bg-slate-100 text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header - Brutalist & Clean */}

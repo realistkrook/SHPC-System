@@ -333,7 +333,7 @@ const ExportTVSection = () => {
             const dataUrl = await toPng(tvRef.current, {
                 width: 1080,
                 height: 1920,
-                backgroundColor: '#000000',
+                backgroundColor: '#f1f5f9',
                 pixelRatio: 1,
                 skipFonts: false,
                 style: {
@@ -364,7 +364,7 @@ const ExportTVSection = () => {
             const dataUrl = await toPng(igRef.current, {
                 width: 1080,
                 height: 1080,
-                backgroundColor: '#000000',
+                backgroundColor: '#f1f5f9',
                 pixelRatio: 1,
                 skipFonts: false,
                 style: {

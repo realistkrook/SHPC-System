@@ -23,7 +23,7 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
         return (
             <div
                 ref={ref}
-                style={{ width: '1080px', height: '1080px' }}
+                style={{ width: '1080px', height: '1080px', backgroundColor: '#f1f5f9' }}
                 className="bg-slate-100 text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header */}

@@ -670,7 +670,7 @@ const ExportAssetsSection: React.FC = () => {
       const dataUrl = await toPng(ref, {
         width: kind === 'tv' ? 1080 : 1080,
         height: kind === 'tv' ? 1920 : 1080,
-        backgroundColor: '#000000',
+        backgroundColor: '#f1f5f9',
         pixelRatio: 1,
       });
 
