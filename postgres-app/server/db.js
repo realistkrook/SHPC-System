@@ -1,15 +1,24 @@
 const { Pool } = require('pg');
 
-// Load environment variables
 require('dotenv').config();
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/house_points',
-});
+function createPool(connectionString = process.env.DATABASE_URL || 'postgresql://localhost:5432/house_points') {
+  return new Pool({ connectionString });
+}
 
-// Test the connection on startup
-pool.query('SELECT NOW()')
-  .then(() => console.log('✅ Connected to PostgreSQL'))
-  .catch((err) => console.error('❌ PostgreSQL connection error:', err.message));
+async function logConnectionHealth(pool) {
+  try {
+    await pool.query('SELECT NOW()');
+    console.log('✅ Connected to PostgreSQL');
+  } catch (err) {
+    console.error('❌ PostgreSQL connection error:', err.message);
+  }
+}
 
-module.exports = pool;
+const pool = createPool();
+
+module.exports = {
+  pool,
+  createPool,
+  logConnectionHealth,
+};

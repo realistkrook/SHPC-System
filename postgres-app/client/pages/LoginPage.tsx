@@ -1,59 +1,44 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { api } from '../services/apiService';
-import { Profile } from '../types';
 import AoteaLogo from '../components/icons/AoteaLogo';
+import { useAuth } from '../hooks/useAuth';
+import { UserRole } from '../types';
 
-/**
- * LoginPage — PostgreSQL version.
- * Instead of email/password or OAuth, users select a profile from a dropdown.
- * This is a simplified auth approach suitable for assessment/demo.
- */
+function getDestinationForRole(role: UserRole) {
+  switch (role) {
+    case UserRole.Admin:
+      return '/admin';
+    case UserRole.WhanauLeader:
+      return '/leader';
+    case UserRole.Teacher:
+      return '/dashboard';
+    default:
+      return '/';
+  }
+}
+
 const LoginPage: React.FC = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [selectedId, setSelectedId] = useState('');
+  const navigate = useNavigate();
+  const { profile, signIn } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetchingProfiles, setFetchingProfiles] = useState(true);
-  const navigate = useNavigate();
-  const { profile, selectProfile } = useAuth();
 
   useEffect(() => {
     if (profile) {
-      navigate('/');
+      navigate(getDestinationForRole(profile.role), { replace: true });
     }
-  }, [profile, navigate]);
+  }, [navigate, profile]);
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const data = await api.getProfiles();
-        setProfiles(data);
-        if (data.length > 0) {
-          setSelectedId(data[0].id);
-        }
-      } catch (err: any) {
-        setError('Failed to load profiles. Is the server running?');
-      } finally {
-        setFetchingProfiles(false);
-      }
-    };
-    fetchProfiles();
-  }, []);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedId) {
-      setError('Please select a profile');
-      return;
-    }
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setLoading(true);
     setError(null);
+
     try {
-      await selectProfile(selectedId);
-      navigate('/');
+      const currentProfile = await signIn(email, password);
+      navigate(getDestinationForRole(currentProfile.role), { replace: true });
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
     } finally {
@@ -69,52 +54,76 @@ const LoginPage: React.FC = () => {
           <h2 className="mt-6 text-3xl font-black text-white tracking-tight">
             Staff Login
           </h2>
-          <p className="mt-2 text-sm text-slate-400 font-medium uppercase tracking-wide">Aotea College House Points</p>
-          <p className="mt-1 text-xs text-slate-500">(PostgreSQL Version — Demo Mode)</p>
+          <p className="mt-2 text-sm text-slate-400 font-medium uppercase tracking-wide">
+            Aotea College House Points
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Staff accounts are created and managed by administrators.
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl text-sm">{error}</div>}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
+
           <div className="space-y-4">
             <div>
-              <label htmlFor="profile-select" className="block text-sm font-medium text-slate-300 mb-2">
-                Select your profile
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                School email
               </label>
-              {fetchingProfiles ? (
-                <div className="text-slate-400 text-sm py-3">Loading profiles...</div>
-              ) : (
-                <select
-                  id="profile-select"
-                  value={selectedId}
-                  onChange={(e) => setSelectedId(e.target.value)}
-                  className="appearance-none relative block w-full px-4 py-3 border border-slate-700 bg-slate-950/50 text-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-aotea-teal focus:border-transparent sm:text-sm transition-all"
-                >
-                  {profiles.map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.full_name} — {p.role}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-700 bg-slate-950/50 text-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-aotea-teal focus:border-transparent sm:text-sm transition-all"
+                placeholder="name@aotea.school.nz"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="appearance-none relative block w-full px-4 py-3 border border-slate-700 bg-slate-950/50 text-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-aotea-teal focus:border-transparent sm:text-sm transition-all"
+                placeholder="Enter your password"
+                required
+              />
             </div>
           </div>
+
           <div>
             <button
               type="submit"
-              disabled={loading || fetchingProfiles || profiles.length === 0}
+              disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-aotea-teal hover:bg-aotea-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aotea-teal focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-aotea-teal/20 transition-all transform hover:-translate-y-0.5"
             >
-              {loading ? 'Signing In...' : 'Sign In as Selected User'}
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>
 
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
           <button
             onClick={() => navigate('/')}
             className="w-full text-center text-sm text-slate-400 hover:text-white transition-colors"
           >
             &larr; Back to Leaderboard
           </button>
+          <p className="text-center text-xs text-slate-500">
+            Need access? Ask an administrator to create or reset your account.
+          </p>
         </div>
       </div>
     </div>

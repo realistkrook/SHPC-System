@@ -25,14 +25,14 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
             <div
                 ref={ref}
                 style={{ width: '1080px', height: '1920px' }}
-                className="bg-black text-white flex flex-col font-sans overflow-hidden"
+                className="bg-white text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header - Brutalist & Clean */}
-                <div className="pt-24 pb-12 px-16 text-center z-10 bg-black flex flex-col items-center justify-center">
+                <div className="pt-24 pb-12 px-16 text-center z-10 bg-white flex flex-col items-center justify-center">
                     <h1 className="text-[110px] font-black uppercase tracking-tighter leading-none mb-6">
                         Aotea Whānau Leaderboard
                     </h1>
-                    <p className="text-[45px] text-gray-400 font-bold tracking-widest uppercase border-y-4 border-gray-800 py-4 px-12 inline-block">
+                    <p className="text-[45px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-200 py-4 px-12 inline-block">
                         Current Standings
                     </p>
                 </div>
@@ -49,13 +49,13 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                 className={clsx(
                                     "flex-1 flex items-center justify-between rounded-[48px] border-8 transition-none",
                                     house.color,
-                                    index === 0 ? "border-white shadow-[0_0_120px_rgba(255,255,255,0.4)] relative overflow-hidden" : "border-black/20 opacity-95",
+                                    index === 0 ? "border-slate-950 shadow-[0_0_120px_rgba(15,23,42,0.14)] relative overflow-hidden" : "border-black/20 opacity-95",
                                     "pl-8 pr-16"
                                 )}
                             >
                                 {/* Subtle shine effect on the leader */}
                                 {index === 0 && (
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 translate-x-1/2"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 translate-x-1/2"></div>
                                 )}
 
                                 <div className="flex items-center gap-6 z-10 flex-1 min-w-0">
@@ -87,7 +87,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
 
                 {/* Footer */}
                 <div className="px-16 pb-10 pt-2 text-center">
-                    <span className="text-2xl text-gray-500 font-medium tracking-wide">
+                    <span className="text-2xl text-slate-500 font-medium tracking-wide">
                         Last updated {exportDate}
                     </span>
                 </div>

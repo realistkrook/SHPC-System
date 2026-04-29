@@ -1,4 +1,3 @@
-
 export enum UserRole {
   Admin = 'admin',
   Student = 'student',
@@ -12,20 +11,24 @@ export interface User {
 }
 
 export interface Profile {
-  id: string; // foreign key to auth.users.id
+  id: string;
   full_name: string;
   email?: string;
   role: UserRole;
+  is_active: boolean;
+  last_login_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface House {
-  id: string; // e.g., "raukawa"
-  name: string; // e.g., "Raukawa"
-  color: string; // e.g., "bg-purple-600"
-  textColor: string; // e.g., "text-purple-600"
+  id: string;
+  name: string;
+  color: string;
+  textColor: string;
   points: number;
   published_points?: number;
-  published_at?: string;
+  published_at?: string | null;
 }
 
 export enum PointRequestStatus {
@@ -36,14 +39,22 @@ export enum PointRequestStatus {
 
 export interface PointRequest {
   id: string;
-  teacher_id: string;
-  teacher_name?: string; // populated for UI
+  teacher_id: string | null;
+  teacher_name?: string;
   house_id: string;
-  house_name?: string; // populated for UI
+  house_name?: string;
   points: number;
   reason: string;
   status: PointRequestStatus;
-  submitted_at: Date;
+  submitted_at: string;
   reviewed_by: string | null;
-  reviewed_by_name?: string; // populated for UI
+  reviewed_by_name?: string | null;
+  reviewed_at?: string | null;
+}
+
+export interface StaffAccountInput {
+  full_name: string;
+  email: string;
+  role: UserRole.Admin | UserRole.Teacher | UserRole.WhanauLeader;
+  password: string;
 }

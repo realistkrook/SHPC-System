@@ -38,9 +38,16 @@ CREATE TABLE IF NOT EXISTS profiles (
   full_name  TEXT NOT NULL,
   email      TEXT UNIQUE,
   role       user_role NOT NULL DEFAULT 'student',
+  password_hash TEXT,
+  is_active  BOOLEAN NOT NULL DEFAULT FALSE,
+  last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS password_hash TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
 
 -- Houses: the four school houses competing for points
 CREATE TABLE IF NOT EXISTS houses (

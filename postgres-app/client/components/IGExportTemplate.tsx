@@ -24,14 +24,14 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
             <div
                 ref={ref}
                 style={{ width: '1080px', height: '1080px' }}
-                className="bg-black text-white flex flex-col font-sans overflow-hidden"
+                className="bg-white text-slate-950 flex flex-col font-sans overflow-hidden"
             >
                 {/* Header */}
-                <div className="pt-12 pb-6 px-12 text-center bg-black flex flex-col items-center justify-center">
+                <div className="pt-12 pb-6 px-12 text-center bg-white flex flex-col items-center justify-center">
                     <h1 className="text-[64px] font-black uppercase tracking-tighter leading-none mb-3">
                         Aotea Whānau Leaderboard
                     </h1>
-                    <p className="text-[28px] text-gray-400 font-bold tracking-widest uppercase border-y-4 border-gray-800 py-2 px-8 inline-block">
+                    <p className="text-[28px] text-slate-600 font-bold tracking-widest uppercase border-y-4 border-slate-200 py-2 px-8 inline-block">
                         Current Standings
                     </p>
                 </div>
@@ -47,7 +47,7 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
                                 className={clsx(
                                     "flex flex-col items-center justify-center rounded-[36px] border-6 relative overflow-hidden",
                                     house.color,
-                                    index === 0 ? "border-white shadow-[0_0_80px_rgba(255,255,255,0.3)]" : "border-black/20 opacity-95"
+                                    index === 0 ? "border-slate-950 shadow-[0_0_80px_rgba(15,23,42,0.12)]" : "border-black/20 opacity-95"
                                 )}
                             >
                                 {/* Shine on leader */}
@@ -101,7 +101,7 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
 
                 {/* Footer */}
                 <div className="px-12 pb-8 pt-1 text-center">
-                    <span className="text-[18px] text-gray-500 font-medium tracking-wide">
+                    <span className="text-[18px] text-slate-500 font-medium tracking-wide">
                         Last updated {exportDate}
                     </span>
                 </div>

@@ -25,7 +25,7 @@ const TeacherDashboardPage: React.FC = () => {
       if (houseData.length > 0) {
         setSelectedHouse(houseData[0].id);
       }
-      const requestData = await api.getPointRequests(profile.id);
+      const requestData = await api.getPointRequests();
       setMyRequests(requestData);
     } catch (err: any) {
       setPageError(err.message);
@@ -54,8 +54,7 @@ const TeacherDashboardPage: React.FC = () => {
       setMessage({ type: 'success', text: 'Point request submitted successfully!' });
       setPoints('');
       setReason('');
-      // Refresh my requests
-      const requestData = await api.getPointRequests(profile.id);
+      const requestData = await api.getPointRequests();
       setMyRequests(requestData);
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Failed to submit request.' });
