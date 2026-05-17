@@ -53,3 +53,5 @@ Desktop.ini
 supabase/functions/*/deno.lock
 
 /.agent
+
+/documentation
