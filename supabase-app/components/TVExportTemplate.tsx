@@ -18,6 +18,18 @@ type HousePalette = {
     divider: string;
 };
 
+const KERERU_PALETTE: HousePalette = {
+    bg: 'linear-gradient(135deg, #B6E8C4 0%, #5FBE81 100%)',
+    border: '#2E9956',
+    text: '#072717',
+    textMuted: 'rgba(7,39,23,0.66)',
+    iconRing: '#A8DCBA',
+    iconBg: '#DCEFE2',
+    swirl: 'rgba(7,80,40,0.18)',
+    pointsLabel: '#176B36',
+    divider: 'rgba(7,39,23,0.22)',
+};
+
 const HOUSE_PALETTE: Record<string, HousePalette> = {
     pukeko: {
         bg: 'linear-gradient(135deg, #4A1D8F 0%, #3A1573 100%)',
@@ -52,17 +64,8 @@ const HOUSE_PALETTE: Record<string, HousePalette> = {
         pointsLabel: '#8E7008',
         divider: 'rgba(58,46,6,0.22)',
     },
-    kereru: {
-        bg: 'linear-gradient(135deg, #B6E8C4 0%, #5FBE81 100%)',
-        border: '#2E9956',
-        text: '#072717',
-        textMuted: 'rgba(7,39,23,0.66)',
-        iconRing: '#A8DCBA',
-        iconBg: '#DCEFE2',
-        swirl: 'rgba(7,80,40,0.18)',
-        pointsLabel: '#176B36',
-        divider: 'rgba(7,39,23,0.22)',
-    },
+    kereru: KERERU_PALETTE,
+    keruru: KERERU_PALETTE, // DB stores this id with the typo
 };
 
 const DEFAULT_PALETTE: HousePalette = {
