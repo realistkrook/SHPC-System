@@ -209,7 +209,6 @@ const Ribbon: React.FC<{ rank: number; palette: HousePalette }> = ({ rank, palet
     const top = isLeader ? -6 : -4;
     const left = isLeader ? 32 : 40;
     const gid = `ribbon-${rank}`;
-    const hid = `ribbon-hl-${rank}`;
     return (
         <div
             style={{
@@ -226,40 +225,14 @@ const Ribbon: React.FC<{ rank: number; palette: HousePalette }> = ({ rank, palet
                 <defs>
                     <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor={ribbon.stopA} />
-                        <stop offset="55%" stopColor={ribbon.stopB} />
                         <stop offset="100%" stopColor={ribbon.stopB} />
-                    </linearGradient>
-                    <linearGradient id={hid} x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor={ribbon.highlight} stopOpacity="0.85" />
-                        <stop offset="100%" stopColor={ribbon.highlight} stopOpacity="0" />
                     </linearGradient>
                 </defs>
 
-                {/* Base ribbon shape */}
+                {/* Base ribbon shape — clean, single gradient, no extra overlays */}
                 <path
                     d={`M0 0 H ${W} V ${H - 8} L ${W / 2} ${H - NOTCH - 8} L 0 ${H - 8} Z`}
                     fill={`url(#${gid})`}
-                />
-
-                {/* Inner highlight stripe on the left edge */}
-                <path
-                    d={`M0 0 H 14 V ${H - 8 - 6} L 7 ${H - NOTCH - 8 - 3} L 0 ${H - 8 - 6} Z`}
-                    fill={`url(#${hid})`}
-                />
-
-                {/* Subtle bottom-edge shadow inside the notch for depth */}
-                <path
-                    d={`M0 ${H - 8} L ${W / 2} ${H - NOTCH - 8} L ${W} ${H - 8} L ${W / 2} ${H - NOTCH - 8 + 4} Z`}
-                    fill={ribbon.stopB}
-                    opacity="0.35"
-                />
-
-                {/* Subtle inner stroke for definition */}
-                <path
-                    d={`M2 0 H ${W - 2} V ${H - 10} L ${W / 2} ${H - NOTCH - 10} L 2 ${H - 10} Z`}
-                    stroke="rgba(0,0,0,0.10)"
-                    strokeWidth="1"
-                    fill="none"
                 />
             </svg>
 
