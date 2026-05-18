@@ -16,7 +16,6 @@ const HouseIcon: React.FC<HouseIconProps> = ({ houseId, className }) => {
 
     // Korimako
     korimako: '/images/Aotea Birds Korimako.png',
-    kōrimako: '/images/Aotea Birds Korimako.png',
 
     // Kotuku
     kotuku: '/images/Aotea Birds Kotuku.png',

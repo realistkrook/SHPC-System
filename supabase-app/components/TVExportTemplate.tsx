@@ -49,7 +49,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                 className={clsx(
                                     "flex-1 flex items-center justify-between rounded-[48px] border-8 transition-none",
                                     house.color,
-                                    index === 0 ? "border-slate-950 shadow-[0_0_120px_rgba(15,23,42,0.14)] relative overflow-hidden" : "border-black/20 opacity-95",
+                                    index === 0 ? "border-yellow-400 outline outline-[10px] outline-yellow-300 shadow-[0_0_120px_rgba(234,179,8,0.35)] relative overflow-hidden" : "border-black/20 opacity-95",
                                     "pl-8 pr-16"
                                 )}
                             >

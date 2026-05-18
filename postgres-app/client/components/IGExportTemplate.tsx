@@ -47,7 +47,7 @@ export const IGExportTemplate = React.forwardRef<HTMLDivElement, IGExportTemplat
                                 className={clsx(
                                     "flex flex-col items-center justify-center rounded-[36px] border-6 relative overflow-hidden",
                                     house.color,
-                                    index === 0 ? "border-slate-950 shadow-[0_0_80px_rgba(15,23,42,0.12)]" : "border-black/20 opacity-95"
+                                    index === 0 ? "border-yellow-400 outline outline-[8px] outline-yellow-300 shadow-[0_0_80px_rgba(234,179,8,0.32)]" : "border-black/20 opacity-95"
                                 )}
                             >
                                 {/* Shine on leader */}

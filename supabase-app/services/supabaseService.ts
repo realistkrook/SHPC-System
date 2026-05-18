@@ -172,8 +172,6 @@ class SupabaseService {
 
       korimako: 'bg-yellow-500',
       Korimako: 'bg-yellow-500',
-      'Kōrimako': 'bg-yellow-500',
-      'kōrimako': 'bg-yellow-500',
 
       kotuku: 'bg-white',
       Kotuku: 'bg-white', // Using white as requested
@@ -185,7 +183,7 @@ class SupabaseService {
       pukeko: 'Pūkeko',
       kereru: 'Kererū',
       keruru: 'Kererū',
-      korimako: 'Kōrimako',
+      korimako: 'Korimako',
       kotuku: 'Kōtuku',
     };
 
@@ -268,7 +266,7 @@ class SupabaseService {
       pukeko: 'Pūkeko',
       kereru: 'Kererū',
       keruru: 'Kererū',
-      korimako: 'Kōrimako',
+      korimako: 'Korimako',
       kotuku: 'Kōtuku',
     };
 

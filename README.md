@@ -13,7 +13,7 @@ A modern, real-time house points tracking system built for Aotea College. This a
 
 ## Features
 
-*   **Live Leaderboard**: Real-time updates of house points (Pūkeko, Kererū, Kōrimako, Kōtuku).
+*   **Live Leaderboard**: Real-time updates of house points (Pūkeko, Kererū, Korimako, Kōtuku).
 *   **TV Mode**: A dedicated, responsive full-screen view for digital signage.
 *   **Staff Authentication**: Secure login via Microsoft (Azure AD) for staff and student leaders.
 *   **Role-Based Access**:

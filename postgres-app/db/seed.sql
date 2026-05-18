@@ -12,7 +12,7 @@
 INSERT INTO houses (id, name, points, published_points) VALUES
   ('pukeko',   'Pūkeko',    125, 100),
   ('kereru',   'Kererū',    98,  90),
-  ('korimako', 'Kōrimako',  142, 130),
+  ('korimako', 'Korimako',  142, 130),
   ('kotuku',   'Kōtuku',    110, 105)
 ON CONFLICT (id) DO NOTHING;
 
@@ -42,7 +42,7 @@ INSERT INTO point_requests (house_id, teacher_id, points, reason, status, submit
   ('pukeko',   'c3d4e5f6-a7b8-9012-cdef-123456789012', 15, 'Outstanding performance in science fair',
    'approved', NOW() - INTERVAL '3 days', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', NOW() - INTERVAL '2 days'),
 
-  -- Approved request from Michael Roberts for Kōrimako
+  -- Approved request from Michael Roberts for Korimako
   ('korimako', 'd4e5f6a7-b8c9-0123-defa-234567890123', 10, 'Excellent teamwork during sports day',
    'approved', NOW() - INTERVAL '5 days', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', NOW() - INTERVAL '4 days'),
 

@@ -46,7 +46,7 @@ INSERT INTO public.houses (id, name, points, published_points)
 SELECT * FROM (VALUES
   ('pukeko','Pūkeko',0,0),
   ('keruru','Kererū',0,0),
-  ('korimako','Kōrimako',0,0),
+  ('korimako','Korimako',0,0),
   ('kotuku','Kōtuku',0,0)
 ) AS v(id,name,points,published_points)
 WHERE NOT EXISTS (SELECT 1 FROM public.houses h WHERE h.id = v.id);
