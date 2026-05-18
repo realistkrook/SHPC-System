@@ -145,46 +145,43 @@ const CalendarIcon: React.FC = () => (
 
 const Ribbon: React.FC<{ rank: number; palette: HousePalette }> = ({ rank, palette }) => {
     const ribbon = getRibbon(rank, palette);
+    const gradientStops = ribbon.fill.match(/#[0-9A-F]{6}/gi);
+    const stopA = gradientStops?.[0] ?? palette.border;
+    const stopB = gradientStops?.[1] ?? gradientStops?.[0] ?? palette.border;
     return (
         <div
             style={{
                 position: 'absolute',
-                top: -6,
-                left: 56,
-                width: 92,
-                height: 132,
-                filter: `drop-shadow(0 6px 0 ${ribbon.shadow}33)`,
+                top: -4,
+                left: 40,
+                width: 72,
+                height: 108,
+                filter: `drop-shadow(0 4px 6px rgba(0,0,0,0.18))`,
                 zIndex: 20,
             }}
         >
-            <svg viewBox="0 0 92 132" width="92" height="132">
+            <svg viewBox="0 0 72 108" width="72" height="108">
                 <defs>
                     <linearGradient id={`ribbon-${rank}`} x1="0" y1="0" x2="0" y2="1">
-                        {ribbon.fill.includes('gradient') ? (
-                            <>
-                                <stop offset="0%" stopColor={ribbon.fill.match(/#[0-9A-F]{6}/gi)?.[0] ?? '#D9A227'} />
-                                <stop offset="100%" stopColor={ribbon.fill.match(/#[0-9A-F]{6}/gi)?.[1] ?? '#9C7414'} />
-                            </>
-                        ) : (
-                            <stop offset="0%" stopColor={palette.border} />
-                        )}
+                        <stop offset="0%" stopColor={stopA} />
+                        <stop offset="100%" stopColor={stopB} />
                     </linearGradient>
                 </defs>
                 <path
-                    d="M0 0 H 92 V 122 L 46 96 L 0 122 Z"
+                    d="M0 0 H 72 V 100 L 36 78 L 0 100 Z"
                     fill={`url(#ribbon-${rank})`}
                 />
             </svg>
             <span
                 style={{
                     position: 'absolute',
-                    top: 18,
+                    top: 14,
                     left: 0,
-                    width: 92,
+                    width: 72,
                     textAlign: 'center',
                     color: ribbon.text,
                     fontWeight: 900,
-                    fontSize: 56,
+                    fontSize: 42,
                     lineHeight: 1,
                     letterSpacing: '-0.04em',
                     fontFamily: 'Montserrat, sans-serif',
@@ -230,31 +227,28 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                 {/* Header */}
                 <div
                     style={{
-                        paddingTop: 88,
-                        paddingLeft: 64,
-                        paddingRight: 64,
-                        paddingBottom: 36,
+                        paddingTop: 80,
+                        paddingLeft: 48,
+                        paddingRight: 48,
+                        paddingBottom: 28,
                         textAlign: 'center',
                         position: 'relative',
                         zIndex: 2,
                     }}
                 >
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
                         <HeaderOrnament />
                     </div>
                     <h1
                         style={{
-                            fontSize: 132,
+                            fontSize: 102,
                             fontWeight: 900,
-                            letterSpacing: '-0.045em',
-                            lineHeight: 0.92,
+                            letterSpacing: '-0.04em',
+                            lineHeight: 0.94,
                             margin: 0,
                             textTransform: 'uppercase',
-                            background: 'linear-gradient(180deg, #0F1A40 0%, #1E2D63 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
-                            textShadow: 'none',
+                            color: '#15235A',
+                            whiteSpace: 'nowrap',
                         }}
                     >
                         Aotea Whānau
@@ -269,25 +263,25 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 18,
-                            marginTop: 32,
+                            marginTop: 28,
                             marginBottom: 14,
                         }}
                     >
-                        <div style={{ width: 180, height: 2, background: '#1E2D63', opacity: 0.35 }} />
+                        <div style={{ width: 160, height: 2, background: '#1E2D63', opacity: 0.35 }} />
                         <div
                             style={{
-                                width: 16,
-                                height: 16,
+                                width: 14,
+                                height: 14,
                                 background: '#1E2D63',
                                 opacity: 0.7,
                                 transform: 'rotate(45deg)',
                             }}
                         />
-                        <div style={{ width: 180, height: 2, background: '#1E2D63', opacity: 0.35 }} />
+                        <div style={{ width: 160, height: 2, background: '#1E2D63', opacity: 0.35 }} />
                     </div>
                     <p
                         style={{
-                            fontSize: 38,
+                            fontSize: 34,
                             color: '#4B5778',
                             fontWeight: 700,
                             letterSpacing: '0.32em',
@@ -323,13 +317,13 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     flex: 1,
                                     background: palette.bg,
                                     border: `4px solid ${palette.border}`,
-                                    borderRadius: 44,
+                                    borderRadius: 40,
                                     position: 'relative',
                                     overflow: 'hidden',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    paddingLeft: 56,
-                                    paddingRight: 64,
+                                    paddingLeft: 132,
+                                    paddingRight: 40,
                                     boxShadow: isLeader
                                         ? `0 18px 48px ${palette.border}55, 0 0 0 1px rgba(255,255,255,0.4) inset`
                                         : `0 10px 28px rgba(14,26,54,0.06), 0 0 0 1px rgba(255,255,255,0.6) inset`,
@@ -341,94 +335,87 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     style={{
                                         right: -120,
                                         top: -80,
-                                        width: 540,
-                                        height: 540,
-                                    }}
-                                />
-                                <Swirl
-                                    color={palette.swirl}
-                                    style={{
-                                        right: -60,
-                                        bottom: -160,
-                                        width: 380,
-                                        height: 380,
-                                        transform: 'rotate(180deg)',
+                                        width: 480,
+                                        height: 480,
                                     }}
                                 />
 
                                 <Ribbon rank={rank} palette={palette} />
 
-                                {/* Left: icon + name */}
+                                {/* Icon */}
+                                <div
+                                    style={{
+                                        width: 144,
+                                        height: 144,
+                                        borderRadius: 999,
+                                        background: palette.iconBg,
+                                        border: `7px solid ${palette.iconRing}`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        boxShadow: '0 10px 24px rgba(14,26,54,0.12)',
+                                        zIndex: 10,
+                                        marginRight: 28,
+                                    }}
+                                >
+                                    <HouseIcon houseId={house.id} className="w-28 h-28" />
+                                </div>
+
+                                {/* Name */}
                                 <div
                                     style={{
                                         display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 36,
-                                        flex: 1,
+                                        flexDirection: 'column',
                                         minWidth: 0,
+                                        flex: 1,
                                         zIndex: 10,
-                                        marginLeft: 196,
                                     }}
                                 >
-                                    <div
+                                    <span
                                         style={{
-                                            width: 180,
-                                            height: 180,
-                                            borderRadius: 999,
-                                            background: palette.iconBg,
-                                            border: `8px solid ${palette.iconRing}`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexShrink: 0,
-                                            boxShadow: '0 10px 24px rgba(14,26,54,0.12)',
+                                            fontSize: 24,
+                                            fontWeight: 700,
+                                            color: palette.textMuted,
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3em',
+                                            marginBottom: 4,
+                                            whiteSpace: 'nowrap',
                                         }}
                                     >
-                                        <HouseIcon houseId={house.id} className="w-36 h-36" />
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                                        <span
-                                            style={{
-                                                fontSize: 30,
-                                                fontWeight: 700,
-                                                color: palette.textMuted,
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.32em',
-                                                marginBottom: 6,
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            Rank #{rank}
-                                        </span>
-                                        <h2
-                                            style={{
-                                                fontSize: 108,
-                                                fontWeight: 900,
-                                                color: palette.text,
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '-0.04em',
-                                                lineHeight: 0.95,
-                                                margin: 0,
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            {house.name}
-                                        </h2>
-                                    </div>
+                                        Rank #{rank}
+                                    </span>
+                                    <h2
+                                        style={{
+                                            fontSize: 68,
+                                            fontWeight: 900,
+                                            color: palette.text,
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '-0.035em',
+                                            lineHeight: 0.95,
+                                            margin: 0,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {house.name}
+                                    </h2>
                                 </div>
 
                                 {/* Vertical divider */}
                                 <div
                                     style={{
                                         width: 2,
-                                        height: 180,
+                                        alignSelf: 'stretch',
+                                        marginTop: 36,
+                                        marginBottom: 36,
                                         background: palette.divider,
-                                        marginRight: 40,
+                                        marginLeft: 24,
+                                        marginRight: 32,
                                         zIndex: 10,
                                     }}
                                 />
 
-                                {/* Right: points */}
+                                {/* Points */}
                                 <div
                                     style={{
                                         display: 'flex',
@@ -437,12 +424,12 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                         justifyContent: 'center',
                                         flexShrink: 0,
                                         zIndex: 10,
-                                        minWidth: 260,
+                                        width: 230,
                                     }}
                                 >
                                     <span
                                         style={{
-                                            fontSize: 144,
+                                            fontSize: 102,
                                             fontWeight: 900,
                                             color: palette.text,
                                             letterSpacing: '-0.05em',
@@ -454,11 +441,11 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     </span>
                                     <span
                                         style={{
-                                            fontSize: 26,
+                                            fontSize: 22,
                                             fontWeight: 700,
                                             color: palette.pointsLabel,
                                             textTransform: 'uppercase',
-                                            letterSpacing: '0.34em',
+                                            letterSpacing: '0.32em',
                                             marginTop: 4,
                                         }}
                                     >
