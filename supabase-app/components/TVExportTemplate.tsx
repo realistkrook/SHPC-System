@@ -90,7 +90,7 @@ const getRibbon = (rank: number, palette: HousePalette) =>
         text: palette.text,
     };
 
-// Decorative swirl flourish used in card backgrounds and page background
+// Page-background generic spiral (kept for the corners of the page)
 const Swirl: React.FC<{ color: string; style?: React.CSSProperties }> = ({ color, style }) => (
     <svg
         viewBox="0 0 400 400"
@@ -114,25 +114,74 @@ const Swirl: React.FC<{ color: string; style?: React.CSSProperties }> = ({ color
     </svg>
 );
 
-// Top ornament — a stylised Aotea/Māori-inspired motif
-const HeaderOrnament: React.FC = () => (
-    <svg width="92" height="64" viewBox="0 0 92 64" fill="none">
+// Kōwhaiwhai-inspired Māori pattern — flowing koru spirals with bulb terminations
+const KowhaiwhaiPattern: React.FC<{ color: string; style?: React.CSSProperties }> = ({ color, style }) => (
+    <svg
+        viewBox="0 0 520 360"
+        fill="none"
+        style={{ position: 'absolute', pointerEvents: 'none', ...style }}
+    >
+        {/* Large koru spiral */}
         <path
-            d="M46 4 C 30 4, 18 18, 18 34 C 18 46, 28 56, 40 56 C 48 56, 54 50, 54 42 C 54 36, 50 32, 44 32"
-            stroke="#15235A"
-            strokeWidth="4"
+            d="M 40 200
+               C 40 110, 110 40, 210 40
+               C 310 40, 380 110, 380 200
+               C 380 258, 340 300, 280 300
+               C 240 300, 210 270, 210 230
+               C 210 205, 230 185, 255 185
+               C 270 185, 280 195, 280 208"
+            stroke={color}
+            strokeWidth="16"
             strokeLinecap="round"
             fill="none"
         />
+        <circle cx="280" cy="208" r="9" fill={color} />
+
+        {/* Secondary tight koru */}
         <path
-            d="M46 4 C 62 4, 74 18, 74 34 C 74 46, 64 56, 52 56 C 44 56, 38 50, 38 42 C 38 36, 42 32, 48 32"
-            stroke="#15235A"
-            strokeWidth="4"
+            d="M 380 100
+               C 380 78, 398 60, 422 60
+               C 446 60, 464 78, 464 102
+               C 464 118, 452 130, 436 130
+               C 426 130, 418 122, 418 112"
+            stroke={color}
+            strokeWidth="12"
             strokeLinecap="round"
             fill="none"
         />
-        <circle cx="46" cy="34" r="3.5" fill="#15235A" />
+        <circle cx="418" cy="112" r="6" fill={color} />
+
+        {/* Connecting flourish */}
+        <path
+            d="M 60 320
+               C 110 280, 170 280, 210 310"
+            stroke={color}
+            strokeWidth="10"
+            strokeLinecap="round"
+            fill="none"
+        />
+
+        {/* Pātiki (diamond) accents */}
+        <path d="M 440 220 L 460 240 L 440 260 L 420 240 Z" stroke={color} strokeWidth="6" fill="none" strokeLinejoin="round" />
+        <circle cx="440" cy="240" r="3" fill={color} />
     </svg>
+);
+
+// Aotea school logo, recolored from white → navy via a CSS filter chain.
+// brightness(0) flattens to black (preserving alpha), then invert+sepia+saturate+hue-rotate
+// shifts the colour to #15235A (Aotea navy). Filter generated for the specific target color.
+const AoteaMark: React.FC<{ size?: number }> = ({ size = 78 }) => (
+    <img
+        src="/images/aoteawhitelogo.png"
+        alt="Aotea College"
+        style={{
+            width: size,
+            height: size,
+            objectFit: 'contain',
+            filter:
+                'brightness(0) saturate(100%) invert(11%) sepia(63%) saturate(2400%) hue-rotate(220deg) brightness(86%) contrast(96%)',
+        }}
+    />
 );
 
 const CalendarIcon: React.FC = () => (
@@ -236,8 +285,8 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                         zIndex: 2,
                     }}
                 >
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-                        <HeaderOrnament />
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+                        <AoteaMark size={84} color="#15235A" />
                     </div>
                     <h1
                         style={{
@@ -322,31 +371,31 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     overflow: 'hidden',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    paddingLeft: 132,
-                                    paddingRight: 40,
+                                    paddingLeft: 108,
+                                    paddingRight: 32,
                                     boxShadow: isLeader
                                         ? `0 18px 48px ${palette.border}55, 0 0 0 1px rgba(255,255,255,0.4) inset`
                                         : `0 10px 28px rgba(14,26,54,0.06), 0 0 0 1px rgba(255,255,255,0.6) inset`,
                                 }}
                             >
-                                {/* Decorative swirls on the right */}
-                                <Swirl
+                                {/* Kowhaiwhai pattern on the right */}
+                                <KowhaiwhaiPattern
                                     color={palette.swirl}
                                     style={{
-                                        right: -120,
-                                        top: -80,
-                                        width: 480,
-                                        height: 480,
+                                        right: -60,
+                                        top: -40,
+                                        width: 520,
+                                        height: 360,
                                     }}
                                 />
 
                                 <Ribbon rank={rank} palette={palette} />
 
-                                {/* Icon */}
+                                {/* Icon — sits as far left as the ribbon allows */}
                                 <div
                                     style={{
-                                        width: 144,
-                                        height: 144,
+                                        width: 140,
+                                        height: 140,
                                         borderRadius: 999,
                                         background: palette.iconBg,
                                         border: `7px solid ${palette.iconRing}`,
@@ -356,42 +405,29 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                         flexShrink: 0,
                                         boxShadow: '0 10px 24px rgba(14,26,54,0.12)',
                                         zIndex: 10,
-                                        marginRight: 28,
+                                        marginRight: 24,
                                     }}
                                 >
                                     <HouseIcon houseId={house.id} className="w-28 h-28" />
                                 </div>
 
-                                {/* Name */}
+                                {/* House name (no rank label — the ribbon shows the rank) */}
                                 <div
                                     style={{
                                         display: 'flex',
-                                        flexDirection: 'column',
+                                        alignItems: 'center',
                                         minWidth: 0,
                                         flex: 1,
                                         zIndex: 10,
                                     }}
                                 >
-                                    <span
-                                        style={{
-                                            fontSize: 24,
-                                            fontWeight: 700,
-                                            color: palette.textMuted,
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.3em',
-                                            marginBottom: 4,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        Rank #{rank}
-                                    </span>
                                     <h2
                                         style={{
-                                            fontSize: 68,
+                                            fontSize: 78,
                                             fontWeight: 900,
                                             color: palette.text,
                                             textTransform: 'uppercase',
-                                            letterSpacing: '-0.035em',
+                                            letterSpacing: '-0.045em',
                                             lineHeight: 0.95,
                                             margin: 0,
                                             whiteSpace: 'nowrap',
@@ -409,13 +445,13 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                         marginTop: 36,
                                         marginBottom: 36,
                                         background: palette.divider,
-                                        marginLeft: 24,
-                                        marginRight: 32,
+                                        marginLeft: 20,
+                                        marginRight: 28,
                                         zIndex: 10,
                                     }}
                                 />
 
-                                {/* Points */}
+                                {/* Points — wide enough for 4 digits */}
                                 <div
                                     style={{
                                         display: 'flex',
@@ -424,12 +460,12 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                         justifyContent: 'center',
                                         flexShrink: 0,
                                         zIndex: 10,
-                                        width: 230,
+                                        width: 220,
                                     }}
                                 >
                                     <span
                                         style={{
-                                            fontSize: 102,
+                                            fontSize: 88,
                                             fontWeight: 900,
                                             color: palette.text,
                                             letterSpacing: '-0.05em',
@@ -441,7 +477,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     </span>
                                     <span
                                         style={{
-                                            fontSize: 22,
+                                            fontSize: 24,
                                             fontWeight: 700,
                                             color: palette.pointsLabel,
                                             textTransform: 'uppercase',
