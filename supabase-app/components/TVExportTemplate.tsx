@@ -53,15 +53,15 @@ const HOUSE_PALETTE: Record<string, HousePalette> = {
         divider: 'rgba(120,90,20,0.18)',
     },
     kereru: {
-        bg: 'linear-gradient(135deg, #E3F4E8 0%, #CDE9D7 100%)',
-        border: '#7BC195',
-        text: '#0F3320',
-        textMuted: 'rgba(15,51,32,0.6)',
-        iconRing: '#B3DCC2',
-        iconBg: '#D9ECDF',
-        swirl: 'rgba(15,80,40,0.08)',
-        pointsLabel: '#2F7A4A',
-        divider: 'rgba(15,80,40,0.16)',
+        bg: 'linear-gradient(135deg, #A8D9B8 0%, #6DB484 100%)',
+        border: '#3C7C53',
+        text: '#082817',
+        textMuted: 'rgba(8,40,23,0.66)',
+        iconRing: '#BFE0CB',
+        iconBg: '#E3F0E8',
+        swirl: 'rgba(8,60,30,0.18)',
+        pointsLabel: '#1B5A35',
+        divider: 'rgba(8,40,23,0.22)',
     },
 };
 
@@ -77,16 +77,20 @@ const DEFAULT_PALETTE: HousePalette = {
     divider: 'rgba(14,26,54,0.10)',
 };
 
-const RIBBON_BY_RANK: Record<number, { fill: string; shadow: string; text: string }> = {
-    1: { fill: 'linear-gradient(180deg, #F5C545 0%, #D9A227 100%)', shadow: '#9C7414', text: '#3D2A05' },
-    2: { fill: 'linear-gradient(180deg, #D6DCE2 0%, #A9B3BD 100%)', shadow: '#6E7782', text: '#1F2A3A' },
-    3: { fill: 'linear-gradient(180deg, #EBC15A 0%, #C99536 100%)', shadow: '#8A6017', text: '#3D2A05' },
+type RibbonStyle = { stopA: string; stopB: string; highlight: string; shadow: string; text: string };
+
+const RIBBON_BY_RANK: Record<number, RibbonStyle> = {
+    1: { stopA: '#FFE08A', stopB: '#C68A1A', highlight: '#FFF1B8', shadow: 'rgba(120,80,8,0.55)', text: '#3D2A05' },
+    2: { stopA: '#EEF1F4', stopB: '#9CA8B3', highlight: '#FFFFFF', shadow: 'rgba(60,70,82,0.5)', text: '#1F2A3A' },
+    3: { stopA: '#F3CE6E', stopB: '#A8761F', highlight: '#FBE6A8', shadow: 'rgba(110,72,12,0.5)', text: '#3D2A05' },
 };
 
-const getRibbon = (rank: number, palette: HousePalette) =>
+const getRibbon = (rank: number, palette: HousePalette): RibbonStyle =>
     RIBBON_BY_RANK[rank] ?? {
-        fill: `linear-gradient(180deg, ${palette.border} 0%, ${palette.border} 100%)`,
-        shadow: palette.border,
+        stopA: palette.border,
+        stopB: palette.border,
+        highlight: 'rgba(255,255,255,0.6)',
+        shadow: 'rgba(0,0,0,0.3)',
         text: palette.text,
     };
 
@@ -194,46 +198,100 @@ const CalendarIcon: React.FC = () => (
 
 const Ribbon: React.FC<{ rank: number; palette: HousePalette }> = ({ rank, palette }) => {
     const ribbon = getRibbon(rank, palette);
-    const gradientStops = ribbon.fill.match(/#[0-9A-F]{6}/gi);
-    const stopA = gradientStops?.[0] ?? palette.border;
-    const stopB = gradientStops?.[1] ?? gradientStops?.[0] ?? palette.border;
+    const isLeader = rank === 1;
+    const W = isLeader ? 84 : 72;
+    const H = isLeader ? 124 : 108;
+    const NOTCH = isLeader ? 26 : 22;
+    const fontSize = isLeader ? 50 : 42;
+    const top = isLeader ? -6 : -4;
+    const left = isLeader ? 32 : 40;
+    const gid = `ribbon-${rank}`;
+    const hid = `ribbon-hl-${rank}`;
     return (
         <div
             style={{
                 position: 'absolute',
-                top: -4,
-                left: 40,
-                width: 72,
-                height: 108,
-                filter: `drop-shadow(0 4px 6px rgba(0,0,0,0.18))`,
-                zIndex: 20,
+                top,
+                left,
+                width: W,
+                height: H,
+                filter: `drop-shadow(0 ${isLeader ? 8 : 4}px ${isLeader ? 14 : 6}px ${ribbon.shadow})`,
+                zIndex: 30,
             }}
         >
-            <svg viewBox="0 0 72 108" width="72" height="108">
+            <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H}>
                 <defs>
-                    <linearGradient id={`ribbon-${rank}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={stopA} />
-                        <stop offset="100%" stopColor={stopB} />
+                    <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={ribbon.stopA} />
+                        <stop offset="55%" stopColor={ribbon.stopB} />
+                        <stop offset="100%" stopColor={ribbon.stopB} />
+                    </linearGradient>
+                    <linearGradient id={hid} x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor={ribbon.highlight} stopOpacity="0.85" />
+                        <stop offset="100%" stopColor={ribbon.highlight} stopOpacity="0" />
                     </linearGradient>
                 </defs>
+
+                {/* Base ribbon shape */}
                 <path
-                    d="M0 0 H 72 V 100 L 36 78 L 0 100 Z"
-                    fill={`url(#ribbon-${rank})`}
+                    d={`M0 0 H ${W} V ${H - 8} L ${W / 2} ${H - NOTCH - 8} L 0 ${H - 8} Z`}
+                    fill={`url(#${gid})`}
+                />
+
+                {/* Inner highlight stripe on the left edge */}
+                <path
+                    d={`M0 0 H 14 V ${H - 8 - 6} L 7 ${H - NOTCH - 8 - 3} L 0 ${H - 8 - 6} Z`}
+                    fill={`url(#${hid})`}
+                />
+
+                {/* Subtle bottom-edge shadow inside the notch for depth */}
+                <path
+                    d={`M0 ${H - 8} L ${W / 2} ${H - NOTCH - 8} L ${W} ${H - 8} L ${W / 2} ${H - NOTCH - 8 + 4} Z`}
+                    fill={ribbon.stopB}
+                    opacity="0.35"
+                />
+
+                {/* Subtle inner stroke for definition */}
+                <path
+                    d={`M2 0 H ${W - 2} V ${H - 10} L ${W / 2} ${H - NOTCH - 10} L 2 ${H - 10} Z`}
+                    stroke="rgba(0,0,0,0.10)"
+                    strokeWidth="1"
+                    fill="none"
                 />
             </svg>
+
+            {/* Leader sparkle accent */}
+            {isLeader && (
+                <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 22 22"
+                    style={{ position: 'absolute', top: -10, right: -10 }}
+                >
+                    <path
+                        d="M11 1 L13 9 L21 11 L13 13 L11 21 L9 13 L1 11 L9 9 Z"
+                        fill="#FFE890"
+                        stroke="#C68A1A"
+                        strokeWidth="1"
+                        strokeLinejoin="round"
+                    />
+                </svg>
+            )}
+
             <span
                 style={{
                     position: 'absolute',
-                    top: 14,
+                    top: isLeader ? 18 : 14,
                     left: 0,
-                    width: 72,
+                    width: W,
                     textAlign: 'center',
                     color: ribbon.text,
                     fontWeight: 900,
-                    fontSize: 42,
+                    fontSize,
                     lineHeight: 1,
                     letterSpacing: '-0.04em',
                     fontFamily: 'Montserrat, sans-serif',
+                    textShadow: isLeader ? '0 1px 0 rgba(255,255,255,0.4)' : 'none',
                 }}
             >
                 {rank}
@@ -371,7 +429,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                     overflow: 'hidden',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    paddingLeft: 108,
+                                    paddingLeft: 52,
                                     paddingRight: 32,
                                     boxShadow: isLeader
                                         ? `0 18px 48px ${palette.border}55, 0 0 0 1px rgba(255,255,255,0.4) inset`
@@ -423,7 +481,7 @@ export const TVExportTemplate = React.forwardRef<HTMLDivElement, TVExportTemplat
                                 >
                                     <h2
                                         style={{
-                                            fontSize: 78,
+                                            fontSize: 88,
                                             fontWeight: 900,
                                             color: palette.text,
                                             textTransform: 'uppercase',
