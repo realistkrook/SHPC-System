@@ -39,6 +39,44 @@ A modern, real-time house points tracking system built for Aotea College. This a
     ```
 4.  Run locally: `npm run dev`
 
+## Windows Teacher Quick Start (Postgres App)
+
+1. Install Node.js LTS from https://nodejs.org
+2. Install PostgreSQL for Windows from https://www.postgresql.org/download/windows/
+3. Open PowerShell in the project folder and go to `postgres-app`
+4. Run `run-windows-setup.cmd`
+5. Enter your PostgreSQL username when prompted (default is `postgres`)
+
+PowerShell commands (recommended):
+
+```powershell
+cd "C:\path\to\Aotea College House Points\postgres-app"
+.\run-windows-setup.cmd
+```
+
+Manual PowerShell commands (if needed):
+
+```powershell
+cd "C:\path\to\Aotea College House Points\postgres-app"
+copy .env.example .env
+npm run install:all
+psql -U postgres -d postgres -c "CREATE DATABASE house_points;"
+psql -U postgres -d house_points -f db/schema.sql
+psql -U postgres -d house_points -f db/seed.sql
+npm run dev
+```
+
+The script will:
+- Create `.env` from `.env.example` if needed
+- Install server and client dependencies
+- Create the `house_points` database if it does not exist
+- Apply schema and seed data
+- Start the app
+
+Open:
+- Frontend: `http://localhost:3000`
+- API health: `http://localhost:3001/api/health`
+
 ## License
 
 Private / Personal Project.
