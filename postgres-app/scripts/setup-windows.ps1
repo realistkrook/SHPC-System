@@ -150,6 +150,8 @@ if (-not $psqlPath) {
 Write-Host "Using psql: $psqlPath"
 
 $dbName = 'house_points'
+$schemaFile = Join-Path 'db' 'schema.sql'
+$seedFile = Join-Path 'db' 'seed.sql'
 $dbUserInput = Read-Host "PostgreSQL username (press Enter for 'postgres')"
 $dbUser = if ([string]::IsNullOrWhiteSpace($dbUserInput)) { 'postgres' } else { $dbUserInput.Trim() }
 $dbPasswordSecure = Read-Host "PostgreSQL password for '$dbUser' (leave blank only if local trust auth is enabled)" -AsSecureString
@@ -193,10 +195,35 @@ try {
     }
 
     Write-Step "Applying schema"
-    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', 'db/schema.sql')
+    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', $schemaFile)
 
     Write-Step "Applying seed data"
-    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', 'db/seed.sql')
+    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', $seedFile)
+
+    Write-Step "Verifying seeded houses"
+    $houseCountResult = & $psqlPath '-U' $dbUser '-h' 'localhost' '-d' $dbName '-tAc' 'SELECT COUNT(*) FROM houses;'
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not verify houses table in database '$dbName'."
+    }
+
+    $houseCount = [int]$houseCountResult.Trim()
+    if ($houseCount -lt 4) {
+        Write-Host "Only found $houseCount house rows. Reapplying seed data..." -ForegroundColor Yellow
+        Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', $seedFile)
+
+        $houseCountResult = & $psqlPath '-U' $dbUser '-h' 'localhost' '-d' $dbName '-tAc' 'SELECT COUNT(*) FROM houses;'
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not verify houses table after reapplying seed data."
+        }
+
+        $houseCount = [int]$houseCountResult.Trim()
+    }
+
+    if ($houseCount -lt 4) {
+        throw "Seed data did not create the four houses. Run: psql -U $dbUser -h localhost -d $dbName -f $seedFile"
+    }
+
+    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-c', 'SELECT id, name, points FROM houses ORDER BY id;')
 } finally {
     if ($null -eq $previousPgPassword) {
         Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue

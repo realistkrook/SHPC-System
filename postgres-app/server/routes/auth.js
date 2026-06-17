@@ -65,7 +65,7 @@ function createAuthRouter({ pool, sessionStore, auth }) {
     res.json({ message: 'Signed out successfully' });
   });
 
-  router.get('/me', auth.requireAuth, (req, res) => {
+  router.get('/me', (req, res) => {
     res.json({ profile: req.user });
   });
 
