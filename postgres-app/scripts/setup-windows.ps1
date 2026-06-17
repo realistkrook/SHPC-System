@@ -208,4 +208,9 @@ try {
 Write-Step "Starting app"
 Write-Host "Frontend: http://localhost:3000"
 Write-Host "API health: http://localhost:3001/api/health"
-Invoke-Tool -FilePath 'npm' -Arguments @('run', 'dev')
+& npm run dev
+$devExitCode = $LASTEXITCODE
+if ($devExitCode -ne 0) {
+    Write-Host "The app stopped with exit code $devExitCode. Check the server/client error above." -ForegroundColor Yellow
+    exit $devExitCode
+}
