@@ -37,6 +37,84 @@ function Invoke-Tool {
     }
 }
 
+function ConvertFrom-SecureStringToPlainText {
+    param([System.Security.SecureString]$SecureString)
+
+    if (-not $SecureString) {
+        return ''
+    }
+
+    $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecureString)
+    try {
+        return [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
+    } finally {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+    }
+}
+
+function Get-DotEnvValue {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Key
+    )
+
+    if (-not (Test-Path $Path)) {
+        return $null
+    }
+
+    $escapedKey = [regex]::Escape($Key)
+    foreach ($line in Get-Content $Path) {
+        if ($line -match "^\s*$escapedKey=(.*)$") {
+            return $Matches[1]
+        }
+    }
+
+    return $null
+}
+
+function Set-DotEnvValue {
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][string]$Key,
+        [Parameter(Mandatory = $true)][string]$Value
+    )
+
+    $line = "$Key=$Value"
+    if (-not (Test-Path $Path)) {
+        Set-Content -Path $Path -Value $line -Encoding UTF8
+        return
+    }
+
+    $escapedKey = [regex]::Escape($Key)
+    $found = $false
+    $updated = foreach ($entry in Get-Content $Path) {
+        if ($entry -match "^\s*$escapedKey=") {
+            $found = $true
+            $line
+        } else {
+            $entry
+        }
+    }
+
+    if ($found) {
+        Set-Content -Path $Path -Value $updated -Encoding UTF8
+    } else {
+        Add-Content -Path $Path -Value $line -Encoding UTF8
+    }
+}
+
+function New-SessionSecret {
+    $bytes = New-Object byte[] 32
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    try {
+        $rng.GetBytes($bytes)
+    } finally {
+        $rng.Dispose()
+    }
+
+    return -join ($bytes | ForEach-Object { $_.ToString('x2') })
+}
+
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Resolve-Path (Join-Path $scriptDir '..')
 Set-Location $projectRoot
@@ -74,25 +152,58 @@ Write-Host "Using psql: $psqlPath"
 $dbName = 'house_points'
 $dbUserInput = Read-Host "PostgreSQL username (press Enter for 'postgres')"
 $dbUser = if ([string]::IsNullOrWhiteSpace($dbUserInput)) { 'postgres' } else { $dbUserInput.Trim() }
+$dbPasswordSecure = Read-Host "PostgreSQL password for '$dbUser' (leave blank only if local trust auth is enabled)" -AsSecureString
+$dbPassword = ConvertFrom-SecureStringToPlainText $dbPasswordSecure
 
-Write-Step "Creating database if it does not exist"
-$dbExistsResult = & $psqlPath '-U' $dbUser '-d' 'postgres' '-tAc' "SELECT 1 FROM pg_database WHERE datname = '$dbName';"
-if ($LASTEXITCODE -ne 0) {
-    throw "Could not connect to PostgreSQL as user '$dbUser'."
-}
-
-if ($dbExistsResult.Trim() -eq '1') {
-    Write-Host "Database '$dbName' already exists"
+$encodedDbUser = [System.Uri]::EscapeDataString($dbUser)
+$databaseUrl = if ([string]::IsNullOrEmpty($dbPassword)) {
+    "postgresql://$encodedDbUser@localhost:5432/$dbName"
 } else {
-    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-d', 'postgres', '-c', "CREATE DATABASE $dbName;")
-    Write-Host "Created database '$dbName'"
+    $encodedDbPassword = [System.Uri]::EscapeDataString($dbPassword)
+    "postgresql://$encodedDbUser`:$encodedDbPassword@localhost:5432/$dbName"
 }
 
-Write-Step "Applying schema"
-Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-d', $dbName, '-f', 'db/schema.sql')
+Write-Step "Writing app database settings"
+Set-DotEnvValue -Path '.env' -Key 'DATABASE_URL' -Value $databaseUrl
+Set-DotEnvValue -Path '.env' -Key 'PORT' -Value '3001'
+Set-DotEnvValue -Path '.env' -Key 'CLIENT_URL' -Value 'http://localhost:3000'
 
-Write-Step "Applying seed data"
-Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-d', $dbName, '-f', 'db/seed.sql')
+$currentSessionSecret = Get-DotEnvValue -Path '.env' -Key 'SESSION_SECRET'
+if ([string]::IsNullOrWhiteSpace($currentSessionSecret) -or $currentSessionSecret -eq 'replace-this-with-a-long-random-secret') {
+    Set-DotEnvValue -Path '.env' -Key 'SESSION_SECRET' -Value (New-SessionSecret)
+}
+
+$previousPgPassword = $env:PGPASSWORD
+if (-not [string]::IsNullOrEmpty($dbPassword)) {
+    $env:PGPASSWORD = $dbPassword
+}
+
+try {
+    Write-Step "Creating database if it does not exist"
+    $dbExistsResult = & $psqlPath '-U' $dbUser '-h' 'localhost' '-d' 'postgres' '-tAc' "SELECT 1 FROM pg_database WHERE datname = '$dbName';"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not connect to PostgreSQL as user '$dbUser'."
+    }
+
+    if ($dbExistsResult.Trim() -eq '1') {
+        Write-Host "Database '$dbName' already exists"
+    } else {
+        Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', 'postgres', '-c', "CREATE DATABASE $dbName;")
+        Write-Host "Created database '$dbName'"
+    }
+
+    Write-Step "Applying schema"
+    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', 'db/schema.sql')
+
+    Write-Step "Applying seed data"
+    Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', $dbName, '-f', 'db/seed.sql')
+} finally {
+    if ($null -eq $previousPgPassword) {
+        Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
+    } else {
+        $env:PGPASSWORD = $previousPgPassword
+    }
+}
 
 Write-Step "Starting app"
 Write-Host "Frontend: http://localhost:3000"
