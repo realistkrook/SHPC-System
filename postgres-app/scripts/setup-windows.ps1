@@ -179,6 +179,8 @@ $previousPgPassword = $env:PGPASSWORD
 if (-not [string]::IsNullOrEmpty($dbPassword)) {
     $env:PGPASSWORD = $dbPassword
 }
+$previousPgClientEncoding = $env:PGCLIENTENCODING
+$env:PGCLIENTENCODING = 'UTF8'
 
 try {
     Write-Step "Creating database if it does not exist"
@@ -190,8 +192,16 @@ try {
     if ($dbExistsResult.Trim() -eq '1') {
         Write-Host "Database '$dbName' already exists"
     } else {
-        Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', 'postgres', '-c', "CREATE DATABASE $dbName;")
+        Invoke-Tool -FilePath $psqlPath -Arguments @('-U', $dbUser, '-h', 'localhost', '-d', 'postgres', '-c', "CREATE DATABASE $dbName WITH ENCODING 'UTF8' TEMPLATE template0;")
         Write-Host "Created database '$dbName'"
+    }
+
+    $dbEncoding = & $psqlPath '-U' $dbUser '-h' 'localhost' '-d' 'postgres' '-tAc' "SELECT pg_encoding_to_char(encoding) FROM pg_database WHERE datname = '$dbName';"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not verify encoding for database '$dbName'."
+    }
+    if ($dbEncoding.Trim() -ne 'UTF8') {
+        throw "Database '$dbName' uses encoding '$($dbEncoding.Trim())'. It must be UTF8 because seed data contains macron characters."
     }
 
     Write-Step "Applying schema"
@@ -229,6 +239,12 @@ try {
         Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
     } else {
         $env:PGPASSWORD = $previousPgPassword
+    }
+
+    if ($null -eq $previousPgClientEncoding) {
+        Remove-Item Env:PGCLIENTENCODING -ErrorAction SilentlyContinue
+    } else {
+        $env:PGCLIENTENCODING = $previousPgClientEncoding
     }
 }
 
